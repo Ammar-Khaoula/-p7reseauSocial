@@ -6,9 +6,6 @@
             <router-link :to="{ name: 'MyProfil' }" class="a_profil" aria-current="page" href="#"> 
                profile 
             </router-link>
-            <router-link :to="{ name: 'tousUtulisateur' }" class="a_utulisateur" aria-current="page" href="#">
-              tous les utilisateurs
-            </router-link>
             <router-link :to="{ name: 'login' }" href="javascript:void(0)" @click="logOutClick"
               class="link-acceuil"> Deconnexion
             </router-link>
@@ -19,7 +16,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapState  } from "vuex";
 export default {
   name: 'HelloWorld',
     methods: {
@@ -32,7 +29,7 @@ export default {
   },
   computed: {
     //  getting the current user via the state by mapGetters
-    ...mapGetters(["user"]),
+    ...mapState (["user"]),
   },
 
 }
@@ -54,19 +51,13 @@ export default {
 }
 .nav a{
     text-decoration: none;
-    color: rgb(105, 105, 105);
-    margin-left: 30px;
+    color: rgb(252, 106, 106);
+    margin-left: 40px;
     position: relative;
-    top: 50px;
+    top: 15px;
     font-size: 18px;
     line-height: 70px;
-    font-weight: bolder;
+    font-weight:900;
 }
 
-.text p{
-    border: 1px brown solid;
-    width: 50%;
-    height: 100px;
-    margin-top: 30px;
-}
 </style>

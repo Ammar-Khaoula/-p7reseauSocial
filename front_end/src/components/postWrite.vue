@@ -1,27 +1,29 @@
 <template>
   <div class="card rounded mb-5">
-    <div class="card-header">
-      <div class="d-flex flex-column">
-        <div class="input-group input-group-sm mb-3 mt-3 d-flex flex-row justify-content-start">
-     <div class="col-sm-5 col-md-8">
-          <input class="form-control mr-sm-2 bg-light"
-          v-model="publication" type="text"
-          placeholder="Publier ici..." aria-label="publication" id="publication"/>
+   <section class="card-header">
+    <div class="d-flex flex-row">
+      <div>
+        <button class="inser_img"> Ajouter une image</button>
       </div>
-<!--#############addImage################-->
+        <!--<div class="input-group input-group-sm mb-3 mt-3 d-flex flex-row justify-content-start">-->
+      <main class="col-sm-5 col-md-8 from_input">
+        <input class="form-control mr-sm-2 bg-light" v-model="publication" type="text" placeholder="Publier ici..." aria-label="publication" id="publication"/>
+      </main>
+    </div> 
+     <!--#############addImage################
         <label class="addImage">         
           <span  class="title-image">Ajouter image: </span>
-        <input type="file" id="FileInput"
+          <input type="file" id="FileInput"
          ref="image" name="image_attachment_upload"
          v-on:change="handleFileUpload()"/>
-        </label>
+        </label>-->
         <div>
           <button class="btn btn-primary btn-icon-text btn-edit-profile"
             @click="createPost" :disabled="!publication && !image">
               Publier
           </button>
         </div>
-      </div>
+      
         <div class="p-2 mb-3">
           <template v-if="preview">
             <img :src="preview" class="img-fluid" />
@@ -33,9 +35,8 @@
             </div>
           </template>
         </div>
-    </div>
- </div>
-    
+      
+    </section>   
   </div>
 </template>
 
@@ -88,10 +89,26 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.addImage input{
-  color: red;
+.card-header{
+  background: #FDEDEC;
+  width: 80%;
+  margin-left: 10%;
+}
+.btn{
+  margin-top: 10px;
+}
+.inser_img{
+  width: 70px;
+  height: 100px;
+  margin-left: 20px;
+  margin-right: 20px;
+  border: 3px #F5B7B1  solid;
+  border-radius: 20px;
+  background: #EC7063;
+  color: white;
 }
 input{
-  background:rebeccapurple;
+  height: 120px;
+  width: 550px;
 }
 </style>
