@@ -6,7 +6,6 @@
     <div class="row profile-body d-flex flex-row justify-content-center">     
     <div class="col-xl-6 middle-wrapper">
        <postWrite id="postwrite"></postWrite>
-     <!--  <posted/>-->
     <div class="row mt-4 mt-md-4 mt-lg-0">
     <div class="col-md-12">
     <div class="card rounded">
@@ -15,8 +14,10 @@
       </div>
     
     </div>
+    <updatePost/>
     </div>
     </div> 
+    
     </div>
     </div>
     </div>
@@ -29,13 +30,15 @@ import { mapState } from 'vuex'
 import HelloWorld from '../components/HelloWorld.vue'
 import Post from '@/components/Post.vue'
 import postWrite from '../components/postWrite.vue'
+import updatePost from '../components/updatePost.vue'
 
 export default {
   name: 'Home',
   components: {
      HelloWorld,
      postWrite,
-     Post,    
+     Post,
+     updatePost,    
   },
   created() {
     this.$store.dispatch("getAllPost");

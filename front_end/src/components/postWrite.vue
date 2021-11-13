@@ -2,8 +2,7 @@
   <div class="card rounded mb-5">
     <div class="card-header">
       <div class="d-flex flex-column">
-        <div
-          class="input-group input-group-sm mb-3 mt-3 d-flex flex-row justify-content-start">
+        <div class="input-group input-group-sm mb-3 mt-3 d-flex flex-row justify-content-start">
      <div class="col-sm-5 col-md-8">
           <input class="form-control mr-sm-2 bg-light"
           v-model="publication" type="text"
@@ -11,8 +10,8 @@
       </div>
 <!--#############addImage################-->
         <label class="addImage">         
-          <span class="title-image">Ajouter image</span>
-        <input accept="image/*" type="file" id="FileInput"
+          <span  class="title-image">Ajouter image: </span>
+        <input type="file" id="FileInput"
          ref="image" name="image_attachment_upload"
          v-on:change="handleFileUpload()"/>
         </label>
@@ -78,11 +77,10 @@ export default {
       this.image = null;
       this.preview = null;
       this.publication = "";
-      this.like="";
+      this.like= 0;
     }
   },
     computed: {
-    //  getting the current user via the state by mapGetters
     ...mapState(["user", "post"]),
   },
 }
@@ -90,5 +88,10 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
+.addImage input{
+  color: red;
+}
+input{
+  background:rebeccapurple;
+}
 </style>

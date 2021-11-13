@@ -274,12 +274,12 @@ exports.updatePost = (req, res, next) => {
       });
 };
 exports.deletePost = (req, res, next) => {
-    const postId = req.params.id; // l'id du post
+  const postId = req.params.id; // l'id du post
   const userId = req.body.userId; //l'id de user qui est loggé (voire dans auth.jwt.js)
   User.findOne({
     //On cherche une id d'utilisateur
     attributes: ["id", "email", "isAdmin"],
-    where: { id: userId }, //l'id de user est trouvé et compare avec l'id dans la base de données
+    where: { id: userId }, 
   })
     .then((user) => {
       //après avoir trouvé l'id de user

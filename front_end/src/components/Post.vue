@@ -4,10 +4,8 @@
         <router-link :to="{ name: 'MyProfil'}">
           <img class="rounded-circle profile-pic" src="../assets/icon.png"  alt="profile image"/>
         </router-link>
-
-        <p>{{post.id}}</p>
-
-        <p>{{post.User}}</p>
+       
+        <p >{{post.User}}</p>
       </div> 
 
        <div
@@ -39,6 +37,9 @@
       <div v-if="post">
         <p class="mb-3 tx-14 ms-3">
           {{ post.publication }}
+          {{ post.createdAt }}
+          {{ post.imageUrl }}
+
         </p>  
         <a class="aCursor" data-bs-toggle="modal" data-bs-target="#postModalImage"
           data-bs-whatever="@mdo" @click="showModal(post)"
@@ -69,12 +70,17 @@ export default {
      }
    },
    methods:{
+    deletePost: function () {
+      const dynamicId = this.post.id;
+      console.log("dynamicId"+ this.post.id);
+      this.$store.dispatch("deletePost", { dynamicId });
+    },
       showModal(post) {
-      console.log(post);
       this.$store.dispatch("post", post);
       console.log(post);
     },
    },
+
    computed: {
     //  getting the current user via the state by mapGetters
     ...mapState(["user", "posts"]),

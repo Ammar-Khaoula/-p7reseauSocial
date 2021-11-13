@@ -13,7 +13,7 @@
           <div id="postModal" class="d-flex justify-content-center">
             <div class="input-group input-group-sm mb-3 mt-3 d-flex flex-row justify-content-start">
               <!-- image -->
-              <img class="rounded-circle img-xs" src="../assets/icon.png" alt=""/>
+              <img class="rounded-circle img-xs" src="../assets/icon.png" alt="" style="width:200px; height:200px;"/>
               <div class="col-sm-5 col-md-8 ms-3">
                 <input class="form-control mr-sm-2 bg-light"
                   v-model="publication" :maxlength="max" type="text"
@@ -88,10 +88,9 @@ export default {
       console.log(publication);
       const image = this.image;
       console.log(image);
-      const dynamicId = this.post.id;
-      console.log(dynamicId);
+      const dynamicId = this.post;
+      console.log('post.id');
       this.$store.dispatch("updatePost", { publication, image, dynamicId });
-      // this.$refs["resetInput"].value = "";
       this.$refs["resetInput"].value = "";
     },
   },

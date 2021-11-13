@@ -34,7 +34,8 @@ export default createStore({
     user: {},
     users: null,
     posts: [],
-    comment: null,
+    post: {},
+    commentaire: null,
     createdAt: Date,
     token: '',
     userInfo: {
@@ -42,6 +43,12 @@ export default createStore({
       last_name: '',
       email: '',
       bio: '',
+    },
+    SET_POSTS: {
+      publication: '',
+      imageUrl: '',
+      createdAt: Date,
+      like: 0,
     },
   },
   plugins: [
@@ -70,6 +77,7 @@ export default createStore({
     users: function (state, users) {
       state.users = users;
     },
+
   SET_POSTS(state, posts) {
       state.posts = posts;
   },
@@ -88,10 +96,31 @@ export default createStore({
 		const usersLiked = [];
 		post = { ...post, usersLiked};
 		state.posts = { post, ...state.posts };
-	},
-	DELETE_POST(state, posts) {
-		state.posts = posts;
-	},
+  },
+  update_post(state, post) {
+      // Boucle sur le tableau de la post
+      for (let i = 0; i < state.posts.length; i++) {
+        if (state.posts[i].UserId == post.id) {
+          console.log(state.posts[i].publication, "==", post.publication);
+          state.posts[i].publication = post.publication;
+          state.posts[i].imageUrl = post.imageUrl;
+          state.posts[i].updatedAt = post.updatedAt;
+        }
+      }
+  },
+
+  deletePost(state, post) {
+    let index = 0;
+      for (let postFind of state.posts) {
+        console.log(postFind);
+        console.log(post.post.id, "==", postFind.id);
+        if (postFind.id == post.post.id) {
+          state.posts.splice(index, 1);
+          // console.log(postFind.splice(post));
+        }
+        index++;
+      }
+  },
 	LIKE_POST(state, posts) {
 		state.posts = posts;
 	},
@@ -107,8 +136,8 @@ export default createStore({
 			if (post.user.imageURL == null) {
 				const index = state.posts.indexOf(post);
 				post.user.imageURL ="@/assets/user-regular.svg";
-				if (post.Comments.user.imageURL == null) {
-					post.Comments.user.imageURL ="@/assets/dev_images/user-regular.svg";
+				if (post.commentaires.user.imageURL == null) {
+					post.commentaires.user.imageURL ="@/assets/dev_images/user-regular.svg";
 				}
 				state.posts.splice(index, 1, post); 
 			}
@@ -183,7 +212,7 @@ export default createStore({
           .then((response) => {
             console.log("createPost");
             commit("ADD_NEW_POST", response.data.post);
-            console.log('crcrcrcrcrcrcr'+response.data);
+            console.log('crcrcrcrcrcrcr'+response.data.post);
             resolve(response);
             window.location.reload();
           })
@@ -200,12 +229,52 @@ export default createStore({
             console.log("GetAllPost: "+response.data.posts);
             commit("SET_POSTS", response.data.posts);
             commit('ADD_USERSLIKED_TO_POST');
-            console.log('+++++++++++++: ' + response.data.posts);
+            console.log('+++++++++++++: ' +response);
           })
           .catch((error) => {
             console.log('ereur ereur ereur: '+error);
       });
     },
+    deletePost({ commit }, post) {
+      const confirmDelete = confirm(
+        "Êtes vous sûr de vouloir supprimer ce post ?"
+      );
+      const deletePost = `/postes/${post.dynamicId}`;
+      console.log("before promiseBBBBB: ", post.dynamicId);
+      if (confirmDelete) {
+        return new Promise((resolve, reject) => {
+          instance
+            .delete(deletePost)
+            .then((response) => {
+              console.log("delete reponseDDDDDDD: ", response.data);
+              commit("deletePost", response.data.post);
+              console.log("delete reponse");
+              resolve(response);
+            })
+            .catch((error) => {
+              // post
+              console.log("dddddd"+error);
+              reject(error);
+            });
+        });
+      }
+    },
+    /*updatePost({ commit }, post) {
+      console.log('post.publication');
+      let formData = new FormData();
+      formData.append("image", post.image);
+      formData.append("publication", post.publication);
+      const createUpdatePost = `/postes/${post.dynamicId}`;
+        instance
+          .put(createUpdatePost, formData)
+          .then((response) => {
+            console.log(response.data.post);
+            commit("update_post", response.data.post);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+    },*/
 
   },
  //################### modules ##############
