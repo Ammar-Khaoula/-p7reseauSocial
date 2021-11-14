@@ -1,29 +1,26 @@
 <template>
   <div class="card rounded mb-5">
    <section class="card-header">
-    <div class="d-flex flex-row">
-      <div>
-        <button class="inser_img"> Ajouter une image</button>
-      </div>
+    <div class="d-flex flex-column">
+      <!--#############addImage################-->
+       <label class="addImage">         
+          <span  class="title-image">Ajouter une image </span>
+          <input type="file" id="FileInput"
+         ref="image" name="image_attachment_upload"
+         v-on:change="handleFileUpload()"/>
+        </label>
         <!--<div class="input-group input-group-sm mb-3 mt-3 d-flex flex-row justify-content-start">-->
       <main class="col-sm-5 col-md-8 from_input">
         <input class="form-control mr-sm-2 bg-light" v-model="publication" type="text" placeholder="Publier ici..." aria-label="publication" id="publication"/>
       </main>
     </div> 
-     <!--#############addImage################
-        <label class="addImage">         
-          <span  class="title-image">Ajouter image: </span>
-          <input type="file" id="FileInput"
-         ref="image" name="image_attachment_upload"
-         v-on:change="handleFileUpload()"/>
-        </label>-->
         <div>
           <button class="btn btn-primary btn-icon-text btn-edit-profile"
             @click="createPost" :disabled="!publication && !image">
               Publier
           </button>
         </div>
-      
+
         <div class="p-2 mb-3">
           <template v-if="preview">
             <img :src="preview" class="img-fluid" />
@@ -92,23 +89,31 @@ export default {
 .card-header{
   background: #FDEDEC;
   width: 80%;
+  height: 280px;
   margin-left: 10%;
 }
 .btn{
-  margin-top: 10px;
+  position: relative;
+  bottom: 40px;
+  width: 120px;
 }
-.inser_img{
-  width: 70px;
-  height: 100px;
-  margin-left: 20px;
-  margin-right: 20px;
-  border: 3px #F5B7B1  solid;
+.addImage span{
+  position: relative;
+  top: 30px;
+  border: 3px #E74C3C solid;
   border-radius: 20px;
-  background: #EC7063;
-  color: white;
+  padding: 30px 10px;
+  background: #F5B7B1;
+}
+#FileInput{
+  opacity: 0;
 }
 input{
+  position: relative;
+  bottom: 50px;
+  margin-left: 10%;
   height: 120px;
-  width: 550px;
+  width: 600px;
 }
+
 </style>

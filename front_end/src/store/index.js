@@ -259,7 +259,7 @@ export default createStore({
         });
       }
     },
-    /*updatePost({ commit }, post) {
+    updatePost({ commit }, post) {
       console.log('post.publication');
       let formData = new FormData();
       formData.append("image", post.image);
@@ -274,7 +274,7 @@ export default createStore({
           .catch((error) => {
             console.log(error);
           });
-    },*/
+    },
 
   },
  //################### modules ##############

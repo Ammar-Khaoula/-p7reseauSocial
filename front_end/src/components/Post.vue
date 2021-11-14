@@ -5,7 +5,7 @@
           <img class="rounded-circle profile-pic" src="../assets/icon.png"  alt="profile image"/>
         </router-link>
        
-        <p >{{post.User}}</p>
+        <p v-if="post">{{post.id.first_name}}</p>
       </div> 
 
        <div

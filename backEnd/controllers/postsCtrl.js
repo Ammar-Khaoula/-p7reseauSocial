@@ -393,7 +393,7 @@ exports.deletePost = (req, res, next) => {
         });
     })
     .catch((error) => {
-      error.console(error.message);
+     // error.console(error.message);
       return res.status(500).json({ error });
     });
 };
