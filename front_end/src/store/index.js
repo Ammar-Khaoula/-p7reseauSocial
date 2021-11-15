@@ -8,6 +8,7 @@ const instance = axios.create({
   baseURL: 'http://localhost:5000/api/'
 });
 let user = localStorage.getItem('user');
+const userId = JSON.parse(user).userId;
 if (!user) {
   user = {
     userId: -1,
@@ -34,21 +35,22 @@ export default createStore({
     user: {},
     users: null,
     posts: [],
-    post: {},
     commentaire: null,
     createdAt: Date,
     token: '',
     userInfo: {
+      id : '',
       first_name: '',
       last_name: '',
       email: '',
       bio: '',
     },
-    SET_POSTS: {
+    post: {
       publication: '',
       imageUrl: '',
       createdAt: Date,
       like: 0,
+      UserId: '',
     },
   },
   plugins: [
@@ -70,6 +72,7 @@ export default createStore({
       instance.defaults.headers.common['Authorization'] = user.token;
       localStorage.setItem('user', JSON.stringify(user));
       state.user = user;
+      console.log("**********" + user.userId);
     },
     userInfo: function (state, userInfo) {
       state.userInfo = userInfo;
@@ -78,7 +81,7 @@ export default createStore({
       state.users = users;
     },
 
-  SET_POSTS(state, posts) {
+  post(state, posts) {
       state.posts = posts;
   },
 	ADD_USERSLIKED_TO_POST(state){
@@ -112,9 +115,7 @@ export default createStore({
   deletePost(state, post) {
     let index = 0;
       for (let postFind of state.posts) {
-        console.log(postFind);
-        console.log(post.post.id, "==", postFind.id);
-        if (postFind.id == post.post.id) {
+        if (postFind.id == post.id) {
           state.posts.splice(index, 1);
           // console.log(postFind.splice(post));
         }
@@ -123,7 +124,14 @@ export default createStore({
   },
 	LIKE_POST(state, posts) {
 		state.posts = posts;
-	},
+  },
+  addComment(state, commentaire) {
+      for (let postFind of state.posts) {
+        if (postFind.id == commentaire.postId) {
+          postFind.commentaire.push(commentaire);
+        }
+      }
+    },
 	LIKE_COMMENT(state, posts) {
 		state.posts = posts;
 	},
@@ -160,7 +168,7 @@ export default createStore({
       return new Promise((resolve, reject) => {
       instance.post('/auth/login', userInfo)
         .then(function (response) {
-          commit('setStatus', '');
+        commit('setStatus', '');
           commit('logUser', response.data);
         resolve(response);
       })
@@ -199,20 +207,21 @@ export default createStore({
       })
     },
     // Creation du post
-   createPost({ commit }, post) {
-      console.log('post.publication');
+    createPost({ commit }, post) {
       let formData = new FormData();
+      formData.append("publication", post.publication);
       formData.append("image", post.image);
       formData.append("like", post.like);
-      formData.append("publication", post.publication);
-      console.log("formData", formData);
+      formData.append("userId", userId);
+      console.log("----" + userId);
+      console.log("formData", formData.publication);
       const createPost = "/postes/";
       return new Promise((resolve, reject) => {
         instance.post(createPost, formData)
           .then((response) => {
             console.log("createPost");
             commit("ADD_NEW_POST", response.data.post);
-            console.log('crcrcrcrcrcrcr'+response.data.post);
+           console.log('crcrcrcrcrcrcr'+response.data.post.user);
             resolve(response);
             window.location.reload();
           })
@@ -227,33 +236,38 @@ export default createStore({
         instance.get('/postes/')
           .then((response) => {
             console.log("GetAllPost: "+response.data.posts);
-            commit("SET_POSTS", response.data.posts);
+            commit("post", response.data.posts);
             commit('ADD_USERSLIKED_TO_POST');
-            console.log('+++++++++++++: ' +response);
           })
           .catch((error) => {
             console.log('ereur ereur ereur: '+error);
       });
     },
     deletePost({ commit }, post) {
+
+      let formData = new FormData();
+      formData.append("userId", userId);
+
       const confirmDelete = confirm(
         "Êtes vous sûr de vouloir supprimer ce post ?"
       );
+      console.log("b===== ", post.dynamicId);
       const deletePost = `/postes/${post.dynamicId}`;
-      console.log("before promiseBBBBB: ", post.dynamicId);
       if (confirmDelete) {
+        console.log("+++okkkk+++"+deletePost)
         return new Promise((resolve, reject) => {
           instance
-            .delete(deletePost)
+            .delete(deletePost, formData)
             .then((response) => {
               console.log("delete reponseDDDDDDD: ", response.data);
               commit("deletePost", response.data.post);
               console.log("delete reponse");
               resolve(response);
+              window.location.reload();
             })
             .catch((error) => {
               // post
-              console.log("dddddd"+error);
+              console.log("Error : "+error);
               reject(error);
             });
         });
@@ -262,18 +276,44 @@ export default createStore({
     updatePost({ commit }, post) {
       console.log('post.publication');
       let formData = new FormData();
-      formData.append("image", post.image);
+      const postId = document.getElementById("idPost").innerText;
+      console.log(postId+"===" + post.dynamicId +" : "+post.like+" : "+userId+" : "+post.id);
       formData.append("publication", post.publication);
-      const createUpdatePost = `/postes/${post.dynamicId}`;
+      formData.append("imageUrl", post.image);
+      formData.append("like", post.like);
+      formData.append("userId", userId);
+      const createUpdatePost = `/postes/${postId}`;
         instance
           .put(createUpdatePost, formData)
           .then((response) => {
-            console.log(response.data.post);
+            console.log("*****"+response.data.post.userId);
             commit("update_post", response.data.post);
+            window.location.reload();
           })
           .catch((error) => {
             console.log(error);
           });
+    },
+    createComment({ commit }, comment) {
+      console.log("this.comment");
+      let formData = new FormData();
+      formData.append("image", comment.image);
+      formData.append("comment", comment.commentaire);
+      console.log("formData", formData);
+      const createComment = `/comment/${comment.postId}`;
+      return new Promise((resolve, reject) => {
+        instance
+          .post(createComment, formData)
+          .then((response) => {
+            console.log("Hey::", response.data.comment);
+            commit("addComment", response.data.comment);
+            resolve(response);
+          })
+          .catch((error) => {
+            console.log(error);
+            reject(error);
+          });
+      });
     },
 
   },

@@ -133,7 +133,7 @@ exports.createPost = (req, res, next) => {
 };
 exports.updatePost = (req, res, next) => {
     const postId = req.params.id; // l'id du post
-    const userId = req.body.userId; //l'id de user
+  const userId = req.body.userId; //l'id de user
     const postObject = req.file
       ? {
           // Si la personne rajoute un nouvel image
@@ -158,7 +158,8 @@ exports.updatePost = (req, res, next) => {
             UserId: user.id,
           },
         }).then((postFind) => {
-          console.log("Comment", postFind.publication);
+          console.log(postFind);
+          console.log(postFind+"======================Comment", postFind.publication);
           console.log("Image", postFind.imageUrl);
           if (postFind.imageUrl != null) {
             const fileName = postFind.imageUrl.split("/images/")[1];
@@ -275,13 +276,13 @@ exports.updatePost = (req, res, next) => {
 };
 exports.deletePost = (req, res, next) => {
   const postId = req.params.id; // l'id du post
-  const userId = req.body.userId; //l'id de user qui est loggé (voire dans auth.jwt.js)
-  User.findOne({
+  //const userId = req.body.userId; //l'id de user qui est loggé (voire dans auth.jwt.js)
+ /* User.findOne({
     //On cherche une id d'utilisateur
     attributes: ["id", "email", "isAdmin"],
     where: { id: userId }, 
   })
-    .then((user) => {
+    .then((user) => {*/
       //après avoir trouvé l'id de user
       Post.findOne({
         where: {
@@ -299,11 +300,12 @@ exports.deletePost = (req, res, next) => {
             postId, //postId
           })
             .then((commentFind) => {
+              console.log("iciiiii")
               //Une fois le post qui correspond a l'id de l'user trouvé, on extrait le nom du fichier (image) à supprimer et on supprimer avec fs.unlinnk, et une fois que la suppression du fichier est fait, on fait la suppreson de l'objet de la base de données
               if (postFind.imageUrl != null) {
                 const fileName = postFind.imageUrl.split("/images/")[1];
                 fs.unlink(`images/${fileName}`, () => {
-                  if (user && (user.isAdmin || user.id == postFind.UserId)) {
+                 // if (user && (user.isAdmin || user.id == postFind.UserId)) {
                     //on fait une condition, si c'est un admin (true) ou si c'est l'id de l'utilisateur, on peut accder a la publication
                     if (
                       (postFind && commentFind) ||
@@ -333,19 +335,18 @@ exports.deletePost = (req, res, next) => {
                         .status(404)
                         .json({ message: "La publication introuvable!" });
                     }
-                  } else {
+                 /* } else {
                     // Si on ne trouve pas ni l'admin ni l'utilisateur qui a publier cette pubication, alors, on a pas acces pour effacer la publication
                     return res.status(403).json({
                       message: "Vous ne pouvez pas effacer ce post !",
                     });
-                  }
+                  }*/
                 });
               } else {
                 console.log("ici::::::::::::::::::::", postFind.publication);
-                  console.log("ici11::::::::::::::::::::", user.isAdmin);
                   console.log("ici22::::::::::::::::::::", (postFind && !commentFind));
                 // Supression sans image
-                if (user && (user.isAdmin || user.id == postFind.UserId)) {                
+              //  if (user && (user.isAdmin || user.id == postFind.UserId)) {                
                   //on fait une condition, si c'est un admin (true) ou si c'est l'id de l'utilisateur, on peut accder a la publication
                   if ((postFind && commentFind) || (postFind && !commentFind)) {
                     //Si l'id de post a été envoyé dans la requête
@@ -374,26 +375,26 @@ exports.deletePost = (req, res, next) => {
                       .status(404)
                       .json({ message: "La publication introuvable!" });
                   }
-                } else {
+               /* } else {
                   // Si on ne trouve pas ni l'admin ni l'utilisateur qui a publier cette pubication, alors, on a pas acces pour effacer la publication
                   return res.status(403).json({
                     message: "Vous ne pouvez pas effacer ce post !",
                   });
-                }
+                }*/
               }
             })
             .catch((error) => {
               console.error(error.message);
-              return res.status(404).json({ error: "Commentaire vide" });
+              return res.status(404).json({ error: "Commentaire vide"+ error });
             });
         })
         .catch((error) => {
           console.error(error.message);
           res.status(404).json({ message: "La publication n'existe pas!" });
         });
-    })
+  /*  })
     .catch((error) => {
      // error.console(error.message);
       return res.status(500).json({ error });
-    });
+    });*/
 };

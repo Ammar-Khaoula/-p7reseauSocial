@@ -1,14 +1,18 @@
 <template>
   <div class="card-header" style="width:768px; margin-left:10%;">
-     <div class="d-flex align-items-center justify-content-between">
+
+     <main class="d-flex align-items-center justify-content-between">
         <router-link :to="{ name: 'MyProfil'}">
           <img class="rounded-circle profile-pic" src="../assets/icon.png"  alt="profile image"/>
-        </router-link>
-       
+        </router-link> 
+        <h1> nom: {{post.User.last_name}}</h1>
+        <h2>prenom: {{post.User.first_name}}</h2>
+        <p>date: {{post.createdAt}}</p>
         <p v-if="post">{{post.id.first_name}}</p>
-      </div> 
+        <p v-if="post">{{user.first_name}}</p>
+      </main> 
 
-       <div
+       <section
           class="btn-group"
           v-if="showButton == (user.id == post.userId || user.isAdmin == 1)">
           <button
@@ -32,14 +36,15 @@
               </button>
             </li>
           </ul>
-      </div>
-      <div class="card-body">
+          <!--postId -->
+       </section>
+      <section class="card-body">
       <div v-if="post">
+        <span id="idPost">{{post.id}}</span>
         <p class="mb-3 tx-14 ms-3">
           {{ post.publication }}
           {{ post.createdAt }}
           {{ post.imageUrl }}
-
         </p>  
         <a class="aCursor" data-bs-toggle="modal" data-bs-target="#postModalImage"
           data-bs-whatever="@mdo" @click="showModal(post)"
@@ -48,25 +53,38 @@
         </a>
       </div>
       <div class="card-footer">
-      <div class="d-flex post-actions">
+        <div class="d-flex post-actions">
+          <label class=" d-flex align-items-center text-muted me-4 text-decoration-none" for="commentText">
+            <i class="mb-1 me-2 far fa-comment-alt"></i>
+            Commentaire
+          </label>
+        </div>
+         <commentWrite :postId="post.id"></commentWrite>
+   
       </div>
-      </div>
-      </div>
+      </section>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
+import commentWrite from "../components/commentWrite.vue";
+//import comment from "../components/comment.vue";
 export default {
   name: 'Post',
    props:{
      post: Object
    }, 
+   components: {
+    commentWrite,
+    //comment,
+  },
    data(){
      return{
         showButton: true,
         User: '',
         userInfo:'',
+
      }
    },
    methods:{

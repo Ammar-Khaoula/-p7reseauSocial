@@ -85,11 +85,9 @@ export default {
     },
     _updatePost: function () {
       const publication = this.publication;
-      console.log(publication);
       const image = this.image;
-      console.log(image);
-      const dynamicId = this.post;
-      console.log('post.id');
+      const dynamicId = this.post.id;
+      console.log("===***"+dynamicId);
       this.$store.dispatch("updatePost", { publication, image, dynamicId });
       this.$refs["resetInput"].value = "";
     },

@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapState } from "vuex";
 export default {
   name: "Comment",
   props: ["comment"],
@@ -71,7 +71,7 @@ export default {
   },
   computed: {
     //  getting the current user via the state by mapGetters
-    ...mapGetters(["User"]),
+    ...mapState(["User"]),
   },
 };
 </script>

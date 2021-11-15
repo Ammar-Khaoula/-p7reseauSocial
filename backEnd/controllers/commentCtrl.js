@@ -17,12 +17,13 @@ exports.createComment = (req, res, next) => {
   const urlImage = req.file
     ? `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
     : null;
+  console.log("===========" + req.body.comment + " user "+userId);
   const comment = new Comment({
     comment: commentPost,
     imageUrl: urlImage,
     //like: likeComment,
     UserId: userId, //original userId,
-    postId: JSON.parse(postId),
+    postId: JSON.parse(postId)
   });
   comment
     .save()

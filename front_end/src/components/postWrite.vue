@@ -43,10 +43,13 @@ export default {
   name: 'postWrite',
     data(){
       return{
+         id:'',
          publication:'',
          image:'',
          preview:'',
          like:'',
+         User: {},
+         UserId: ''
       };
     },
      methods: {
@@ -70,8 +73,9 @@ export default {
     createPost(){
       const publication = this.publication;
       const image = this.image;
-      const like = this.like
-      this.$store.dispatch("createPost", { publication, image, like });
+      const like = this.like;
+      const userId = this.userId;
+      this.$store.dispatch("createPost", { publication, image, like, userId });
       this.image = null;
       this.preview = null;
       this.publication = "";
