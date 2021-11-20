@@ -56,7 +56,6 @@ export default {
     handleFileUpload() {
       this.image = this.$refs.image.files[0];
       let input = event.target;
-      console.log(event);
       if (input.files) {
         let reader = new FileReader();
         reader.onload = (e) => {
@@ -75,6 +74,7 @@ export default {
       const image = this.image;
       const like = this.like;
       const userId = this.userId;
+      console.log(image+"**************");
       this.$store.dispatch("createPost", { publication, image, like, userId });
       this.image = null;
       this.preview = null;

@@ -8,9 +8,9 @@
         </div>
       <!-- add button here </AddImageButton>-->
        <label class="addImage">
-         <i class="far fa-image-polaroid"></i>
          <span class="title-image">Ajouter image</span>
-         <input accept="image/*" type="file" id="FileInput" ref="image" name="image_attachment_upload" v-on:change="handleFileUpload()"/>
+         <input accept="image/*" type="file" id="FileInput" ref="image" name="image_attachment_upload"
+          v-on:change="handleFileUpload()"/>
        </label>
       <!-- add button end here -->
       <div>
@@ -39,40 +39,41 @@ export default {
   props: ["postId"],
   data() {
     return {
+      id:'',
       comment: "",
       image: "",
       max: 280,
       preview: "",
+      userId:''
     };
   },
   methods: {
-    handleFileUpload() {
+   handleFileUpload() {
+      this.image = this.$refs.image.files[0];
       let input = event.target;
-      console.log(input);
       if (input.files) {
-        console.log("inside condition");
         let reader = new FileReader();
         reader.onload = (e) => {
-          this.preview = e.target.result;
-          console.log("assign preview", this.preview);
+        this.preview = e.target.result;
         };
         this.image = input.files[0];
         reader.readAsDataURL(input.files[0]);
-        console.log("end");
       }
     },
+    resetImage() {
+      this.image = null;
+      this.preview = null;
+    },
     create_comment: function () {
-      const commentaire = this.comment;
-      const image = this.imageUrl;
+      const comment = this.comment;
+      const image = this.image;
+      const userId = this.UserId;
       const postId = this.postId;
-      this.$store.dispatch("createComment", { commentaire, image, postId });
+      console.log(this.image+"***************url :"+image );
+      this.$store.dispatch("createComment", { comment, image, userId, postId });
       this.image = null;
       this.preview = null;
       this.comment = "";
-    },
-    resetImage: function () {
-      this.image = null;
-      this.preview = null;
     },
   },
    computed: {
@@ -81,3 +82,17 @@ export default {
   },
 }
 </script>
+<style scoped>
+#FileInput{
+  opacity: 0;
+}
+.addImage span{
+ border: 2px #85C1E9 solid;
+ background: #f8b0a7;
+ border-radius: 20px;
+ position: relative;
+ left: 160px;
+ bottom: 100px;
+ padding: 10px;
+}
+</style>

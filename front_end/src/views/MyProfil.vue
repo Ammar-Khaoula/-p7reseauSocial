@@ -1,24 +1,37 @@
 <template>
-    <div>
+    <section>
+      <HelloWorld/>
       <div class='profile'>
-        <i class="fas fa-user-tie"></i>
-        <div v-for="user in users" :key="user.id">
-          <p> Bonjour: {{user.first_name}}</p>
-        <profil/>
+        <div class="profilMi">
+          <router-link :to="{ name: 'MyProfil'}">
+           <img class="rounded-circle profile-pic" src="../assets/icon.png"  alt="profile image" style="height:350px;"/>
+          </router-link>
+          <h3> Nom:</h3> 
+          <h3>Prenom:</h3> 
+          <h4>Bio:</h4> 
+        </div>
+        <div class="allUser">
+          <i class="fas fa-user-tie"></i>
+          <main v-for="user in users" :key="user.id">
+            <p> {{user.last_name}} {{user.first_name}}</p>
+            
+          </main>
         </div>
       </div>
-    </div>      
+    </section>      
 </template>
 
 <script>
 
 import { mapState } from 'vuex'
-import profil from "../components/profil.vue";
+//import profil from "../components/profil.vue";
+import HelloWorld from '../components/HelloWorld.vue'
 
 export default {
   name: "MyProfil",
   components: {
-    profil
+   // profil,
+    HelloWorld
   },
    computed: {
        ...mapState ({
@@ -29,16 +42,22 @@ export default {
 </script>
 <style scoped>
   .profile{
-    border: 1px black solid;
-    width: 500px;
-    height: 350px;
-    margin: 150px;  
+    display: flex;
+    justify-content: space-around;
+  }
+  .profilMi{
+    border: 4px #F5B7B1 solid;
+    border-radius: 25px;
+    width: 60%;
+  }
+  .allUser{
+    border: 0px black solid;  
+    border-radius: 15px;
+    background: #F5B7B1;
   }
   .fas{
-    border: 1px black solid;
-    border-radius: 50%;
-    font-size: 90px;
+    color:rgb(236, 4, 4);
+    font-size: 60px;
     padding: 20px;
-    margin: 20px;
   }
 </style>

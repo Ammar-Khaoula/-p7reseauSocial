@@ -2,22 +2,25 @@ import { createStore } from 'vuex'
 import createPersistedState from "vuex-persistedstate";
 import SecureLS from "secure-ls";
 let ls = new SecureLS({ isCompression: false });
-
 const axios = require('axios');
 const instance = axios.create({
   baseURL: 'http://localhost:5000/api/'
 });
+
 let user = localStorage.getItem('user');
-const userId = JSON.parse(user).userId;
+let userId = null;
+
 if (!user) {
   user = {
     userId: -1,
     token: '',
   };
 } else {
-    try{
-      user = JSON.parse(user);
-     instance.defaults.headers.common['Authorization'] = user.token;
+  try {
+    console.log("************debut***********");
+    user = JSON.parse(user);
+    userId = user.userId;
+    instance.defaults.headers.common['Authorization'] = user.token;
     } catch(ex) {
       user = {
         userId: -1,
@@ -36,6 +39,7 @@ export default createStore({
     users: null,
     posts: [],
     commentaire: null,
+    commentaires: [],
     createdAt: Date,
     token: '',
     userInfo: {
@@ -72,7 +76,6 @@ export default createStore({
       instance.defaults.headers.common['Authorization'] = user.token;
       localStorage.setItem('user', JSON.stringify(user));
       state.user = user;
-      console.log("**********" + user.userId);
     },
     userInfo: function (state, userInfo) {
       state.userInfo = userInfo;
@@ -83,7 +86,11 @@ export default createStore({
 
   post(state, posts) {
       state.posts = posts;
-  },
+    },
+  commentaire(state, commentaires) {
+      state.commentaire = commentaires;
+    },
+    
 	ADD_USERSLIKED_TO_POST(state){
 		const usersLiked = [];
 		const posts = state.posts;
@@ -99,9 +106,8 @@ export default createStore({
 		const usersLiked = [];
 		post = { ...post, usersLiked};
 		state.posts = { post, ...state.posts };
-  },
+    },
   update_post(state, post) {
-      // Boucle sur le tableau de la post
       for (let i = 0; i < state.posts.length; i++) {
         if (state.posts[i].UserId == post.id) {
           console.log(state.posts[i].publication, "==", post.publication);
@@ -112,7 +118,7 @@ export default createStore({
       }
   },
 
-  deletePost(state, post) {
+deletePost(state, post) {
     let index = 0;
       for (let postFind of state.posts) {
         if (postFind.id == post.id) {
@@ -121,17 +127,34 @@ export default createStore({
         }
         index++;
       }
-  },
-	LIKE_POST(state, posts) {
-		state.posts = posts;
-  },
-  addComment(state, commentaire) {
-      for (let postFind of state.posts) {
-        if (postFind.id == commentaire.postId) {
-          postFind.commentaire.push(commentaire);
+},
+deleteComment(state, commentaire) {
+  let index = 0;
+    for (let commentFind of state.commentaires) {
+      if (commentFind.id == commentaire.id) {
+        console.log("--------debut delete----------");
+            state.commentaires.splice(index, 1);
+          }
+          index++;
+        }     
+    },
+    updateComment(state, commentaire) {
+      for (let i = 0; i < state.commentaires.length; i++) {
+        if (state.commentaires[i].UserId == commentaire.id) {
+          console.log(state.commentaires[i].comment, "==", commentaire.comment);
+          state.commentaires[i].comment = commentaire.comment;
+          state.commentaires[i].imageUrl = commentaire.imageUrl;
+          state.commentaires[i].updatedAt = commentaire.updatedAt;
         }
       }
+  },
+
+	LIKE_POST(state, posts) {
+		state.posts = posts;
     },
+  addComment(state, commentaire) {
+      state.commentaire = commentaire;
+  },
 	LIKE_COMMENT(state, posts) {
 		state.posts = posts;
 	},
@@ -192,9 +215,9 @@ export default createStore({
           commit('setStatus', 'error_signup');
         reject();
       });
-    });
-      
+    });  
     },
+  
     getProfil: ({ commit }) => {
         commit;
         instance.get('/profile/')
@@ -206,67 +229,70 @@ export default createStore({
             console.log('----------------');
       })
     },
-    // Creation du post
+     // ##########importer tous les posts##########
+     getAllPost({ commit }) {
+      instance.get('/postes/')
+        .then((response) => {
+          commit("post", response.data.posts);
+          commit('ADD_USERSLIKED_TO_POST');
+        })
+        .catch((error) => {
+          console.log('ereur ereur ereur: '+error);
+    });
+  },
+    // ########"""Creation du post############
     createPost({ commit }, post) {
+      console.log("create post avec l'utilisateur " + userId);
+      if (!userId)
+      {
+        userId = localStorage.getItem('user').userId;
+        console.log("l'utilisateur a été null " + userId);
+      }
       let formData = new FormData();
       formData.append("publication", post.publication);
       formData.append("image", post.image);
       formData.append("like", post.like);
       formData.append("userId", userId);
-      console.log("----" + userId);
-      console.log("formData", formData.publication);
+      console.log("********create post********")
       const createPost = "/postes/";
       return new Promise((resolve, reject) => {
         instance.post(createPost, formData)
           .then((response) => {
-            console.log("createPost");
             commit("ADD_NEW_POST", response.data.post);
-           console.log('crcrcrcrcrcrcr'+response.data.post.user);
             resolve(response);
-            window.location.reload();
+           // window.location.reload();
           })
           .catch((error) => {
-            console.log(error);
+            console.log("Erreur : "+error);
             reject(error);
           });
       });
     },
-     // importer tous les posts
-      getAllPost({ commit }) {
-        instance.get('/postes/')
-          .then((response) => {
-            console.log("GetAllPost: "+response.data.posts);
-            commit("post", response.data.posts);
-            commit('ADD_USERSLIKED_TO_POST');
-          })
-          .catch((error) => {
-            console.log('ereur ereur ereur: '+error);
-      });
-    },
+    
     deletePost({ commit }, post) {
-
+      console.log("supprimer le  post : "+post.dynamicId+" de l'utilisateur " + userId);
+      if (!userId)
+      {
+        userId = user.userId;
+        console.log("l'utulisateur a été null " + userId);
+      }
       let formData = new FormData();
       formData.append("userId", userId);
-
-      const confirmDelete = confirm(
-        "Êtes vous sûr de vouloir supprimer ce post ?"
-      );
-      console.log("b===== ", post.dynamicId);
+      const confirmDelete = confirm("Êtes vous sûr de vouloir supprimer ce post ?");
+     
       const deletePost = `/postes/${post.dynamicId}`;
+
       if (confirmDelete) {
-        console.log("+++okkkk+++"+deletePost)
+        console.log("********supprimer post********")
         return new Promise((resolve, reject) => {
           instance
             .delete(deletePost, formData)
             .then((response) => {
-              console.log("delete reponseDDDDDDD: ", response.data);
               commit("deletePost", response.data.post);
-              console.log("delete reponse");
               resolve(response);
               window.location.reload();
             })
             .catch((error) => {
-              // post
               console.log("Error : "+error);
               reject(error);
             });
@@ -274,19 +300,23 @@ export default createStore({
       }
     },
     updatePost({ commit }, post) {
-      console.log('post.publication');
+      console.log("modifier post avec l'utilisateur " + userId);
+      if (!userId)
+      {
+        userId = user.userId;
+        console.log("l'utulisateur a été null " + userId);
+      }
       let formData = new FormData();
       const postId = document.getElementById("idPost").innerText;
-      console.log(postId+"===" + post.dynamicId +" : "+post.like+" : "+userId+" : "+post.id);
       formData.append("publication", post.publication);
       formData.append("imageUrl", post.image);
       formData.append("like", post.like);
       formData.append("userId", userId);
+      console.log("********modifier post********")
       const createUpdatePost = `/postes/${postId}`;
         instance
           .put(createUpdatePost, formData)
           .then((response) => {
-            console.log("*****"+response.data.post.userId);
             commit("update_post", response.data.post);
             window.location.reload();
           })
@@ -294,19 +324,66 @@ export default createStore({
             console.log(error);
           });
     },
-    createComment({ commit }, comment) {
-      console.log("this.comment");
+    createComment({ commit }, commentaire) {
+      console.log("crée de commentaire sur le post "+commentaire.postId+" l'utilisateur " + userId);
+      if (!userId)
+      {
+        userId = user.userId;
+        console.log("l'utulisateur a été null " + userId);
+      }
       let formData = new FormData();
-      formData.append("image", comment.image);
-      formData.append("comment", comment.commentaire);
-      console.log("formData", formData);
-      const createComment = `/comment/${comment.postId}`;
+      formData.append("comment", commentaire.comment);
+      formData.append("image", commentaire.image);
+      formData.append("userId", userId);
+      formData.append("postId", commentaire.postId);
+      console.log("formData", formData.image);
+      const createComment = `/comment/${commentaire.postId}`;
       return new Promise((resolve, reject) => {
         instance
           .post(createComment, formData)
           .then((response) => {
             console.log("Hey::", response.data.comment);
             commit("addComment", response.data.comment);
+            resolve(response);
+           // window.location.reload();
+          })
+          .catch((error) => {
+            console.log(error);
+            reject(error);
+          });
+      });
+    },
+    //############"" getAll commentaire############
+    getAllcommentaire({ commit }) {
+      instance.get('/comment/')
+        .then((response) => {
+          console.log("GetAllComment: " + response.data.comment);
+          commit("commentaire", response.data.comment);
+        })
+        .catch((error) => {
+          console.log('ereur ereur ereur: ' + error);
+        });
+    },
+    //************************modifier commentaire************ */
+    updateComment({ commit }, commentaire) {
+      console.log("modifier commentaire avec l'utilisateur " + userId);
+      if (!userId)
+      {
+        userId = user.userId;
+        console.log("l'utulisateur a été null " + userId);
+      }
+      let formData = new FormData();
+      formData.append("image", commentaire.image);
+      formData.append("comment", commentaire.comment);
+      formData.append("userId", userId);
+      const updateComment = `/comment/${commentaire.dynamicId}`;
+      console.log(updateComment);
+      return new Promise((resolve, reject) => {
+        instance
+          .put(updateComment, formData)
+          .then((response) => {
+            console.log(response.data);
+            commit("updateComment", response.data);
             resolve(response);
           })
           .catch((error) => {
@@ -315,7 +392,38 @@ export default createStore({
           });
       });
     },
-
+    //************************delete commentaire************ */
+    deleteComment({ commit }, commentaire) {
+      console.log("supprimer le  commentaire : "+commentaire.dynamicId+" et l'utilisateur " + userId);
+      if (!userId)
+      {
+        userId = user.userId;
+        console.log("l'utulisateur a été null " + userId);
+      }
+      let formData = new FormData();
+      formData.append("userId", userId);
+      const confirmDelete = confirm("Êtes vous sûr de vouloir supprimer ce commentaire ?");
+    
+      const deleteComment = `/comment/${commentaire.dynamicId}/${userId}`;
+      if (confirmDelete) {
+        return new Promise((resolve, reject) => {
+          instance
+            .delete(deleteComment, formData)            
+            .then((response) => {
+              console.log("----------debut delete-----------");
+              commit("deleteComment", response.data.comment);
+              console.log("----------l'utilisateur a ete suprimer -----------");
+              resolve(response);
+              //window.location.reload();
+            })
+            .catch((error) => {
+              console.log(formData.get("userId") + " ----------");
+              console.log("Error" +error);
+              reject(error);
+            });
+        });
+      }
+    },
   },
  //################### modules ##############
   modules: {

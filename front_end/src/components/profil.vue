@@ -1,7 +1,7 @@
 <template>
-   <div>
-   
-   </div>
+   <section class="d-md-block col-md-4 me-5 mb-5">
+    
+  </section>
 </template>
 <script>
 import { mapState } from 'vuex'

@@ -1,5 +1,5 @@
 <template>
-  <div class="acceuil">
+  <body class="acceuil">
     <div class="container">
     <div class="profile-page tx-13">
       <HelloWorld id="helloWorld"></HelloWorld>
@@ -22,7 +22,7 @@
     </div>
     </div>
     </div>
-  </div>
+  </body>
 </template>
 
 <script>
@@ -38,7 +38,7 @@ export default {
      HelloWorld,
      postWrite,
      Post,
-     updatePost,    
+     updatePost,   
   },
   created() {
     this.$store.dispatch("getAllPost");

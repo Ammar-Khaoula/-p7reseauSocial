@@ -1,22 +1,22 @@
 <template>
   <div class="card-header" style="width:768px; margin-left:10%;">
-
-     <main class="d-flex align-items-center justify-content-between">
+    <div class="body">
+      <main class="d-flex align-items-center justify-content-between">
         <router-link :to="{ name: 'MyProfil'}">
           <img class="rounded-circle profile-pic" src="../assets/icon.png"  alt="profile image"/>
         </router-link> 
-        <h1> nom: {{post.User.last_name}}</h1>
-        <h2>prenom: {{post.User.first_name}}</h2>
-        <p>date: {{post.createdAt}}</p>
-        <p v-if="post">{{post.id.first_name}}</p>
-        <p v-if="post">{{user.first_name}}</p>
+       
+        <h2> {{post.User.last_name}}  {{post.User.first_name}}</h2>
+        <p> {{post.createdAt}}</p>
+       
       </main> 
-
-       <section
+    </div>
+   <section class="card-body">
+     <main
           class="btn-group"
           v-if="showButton == (user.id == post.userId || user.isAdmin == 1)">
           <button
-            class="btn btn-light dropdown-toggle me-5"
+            class="btn btn-Info dropdown-toggle me-5"
             type="button" id="defaultDropdown1" data-bs-toggle="dropdown"
             data-bs-auto-close="true" aria-expanded="false">
           </button>
@@ -36,15 +36,11 @@
               </button>
             </li>
           </ul>
-          <!--postId -->
-       </section>
-      <section class="card-body">
-      <div v-if="post">
-        <span id="idPost">{{post.id}}</span>
+    </main>
+    <div class="pub_post" v-if="post">
         <p class="mb-3 tx-14 ms-3">
           {{ post.publication }}
-          {{ post.createdAt }}
-          {{ post.imageUrl }}
+          {{post.imageUrl}}
         </p>  
         <a class="aCursor" data-bs-toggle="modal" data-bs-target="#postModalImage"
           data-bs-whatever="@mdo" @click="showModal(post)"
@@ -60,45 +56,93 @@
           </label>
         </div>
          <commentWrite :postId="post.id"></commentWrite>
-   
+        <div>     
+        <comment v-for="commentaire in post.commentaires" :key="commentaire.id" :commentaire="commentaire" />
       </div>
-      </section>
+      <updateComment/>
+      </div>
+   </section>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
+import moment from "moment";
 import commentWrite from "../components/commentWrite.vue";
-//import comment from "../components/comment.vue";
+import comment from "../components/comment.vue";
+import updateComment from "../components/updateComment.vue";
 export default {
   name: 'Post',
    props:{
-     post: Object
+     post: Object,
+     commentaire: Object
    }, 
    components: {
     commentWrite,
-    //comment,
+    comment,
+    updateComment,
   },
    data(){
      return{
-        showButton: true,
-        User: '',
-        userInfo:'',
-
+       formattedTime: "",
+       now: 0,
+       created_At: moment(),
+       showButton: true,
+       User: '',
+       userInfo:'',
+       commentaires: [],
+       commentText: "",
+       image: "",
+       max: 280,
+       preview: "",
      }
    },
-   methods:{
+   methods:{   
+    getFormattedTime(date) {
+      let now = moment(); //todays date
+      let end = moment(date); // another date
+      let duration = moment.duration(now.diff(end));
+      let month = duration.asMonths();
+      let days = duration.asDays();
+      let hours = duration.asHours();
+      let minutes = duration.asMinutes();
+      let seconds = duration.asSeconds();
+      if (seconds > 0 && seconds < 60) {
+        return Math.round(seconds) + "s";
+      }
+      if (minutes > 0 && minutes < 60) {
+        return Math.round(minutes) + "m";
+      }
+      if (hours > 0 && hours < 24) {
+        return Math.round(hours) + "h";
+      }
+      if (days > 0) {
+        return end.format("D MMM");
+      }
+      if (month > 0 && month <= 12) {
+        return end.format("D MMM YYY");
+      }
+    },
     deletePost: function () {
       const dynamicId = this.post.id;
-      console.log("dynamicId"+ this.post.id);
       this.$store.dispatch("deletePost", { dynamicId });
     },
       showModal(post) {
       this.$store.dispatch("post", post);
-      console.log(post);
     },
-   },
-
+  },
+  watch: {
+    now() {
+      this.formattedTime = this.getFormattedTime(this.post.updatedAt);
+    },
+  },
+  created() {
+    this.formattedTime = moment();
+    this.formattedTime = this.getFormattedTime(this.post.updatedAt);
+    setInterval(() => {
+      this.now = moment();
+    }, 3000);
+  },
    computed: {
     //  getting the current user via the state by mapGetters
     ...mapState(["user", "posts"]),
@@ -108,8 +152,32 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.body{
+  background: #f8b4ac;
+  border-top: 0.5rem #5DADE2 solid;
+  border-top-right-radius: 60px;
+  padding: 20px;
+}
+.btn{
+  position: relative;
+  left: 356px;
+  top: 40px;
+  background: #85C1E9;
+  border:3px #f8b4ac solid;
+}
+.pub_post{
+  background: #FDEDEC;
+  padding: 10px;
+  padding-bottom: 30px;
+}
+.card-footer{
+  background: #EBF5FB;
+}
+
 a img{
   height: 150px;
 }
-
+h3{
+  font-size: 16px;
+}
 </style>

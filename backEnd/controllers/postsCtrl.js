@@ -78,7 +78,6 @@ exports.getAllPostbyUser = (req, res, next) => {
 };
 exports.createPost = (req, res, next) => {
     const userId = req.body.userId;
-    console.log("----------" + userId);
   // const postId = req.params.id;
   const urlImage = req.file
     ? `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
