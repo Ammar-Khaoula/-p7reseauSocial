@@ -3,7 +3,7 @@
     <div class="logo">
         <div><img id="iconee" alt="logo" src="../assets/iconee.png"></div>
     </div>
-    <loginForm/>
+    <loginForm class="loginForm"/>
 </body>
 </template>
 
@@ -30,5 +30,17 @@ export default {
 .logo{
     height: 160px; 
     background:linear-gradient(#f80808, #fda9a9, #f7f0f0 );
+    margin-bottom: 60px;
+}
+.loginForm{
+  margin-bottom: 80px;
+}
+@media (max-width: 768px){
+#iconee{
+    width: 300px;
+    height: 250px;
+    position: relative;
+    bottom: 50px;
+}
 }
 </style>

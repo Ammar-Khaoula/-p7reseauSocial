@@ -9,9 +9,8 @@ const instance = axios.create({
 
 let user = localStorage.getItem('user');
 let userId = null;
-
 if (!user) {
-  user = {
+  user = {   
     userId: -1,
     token: '',
   };
@@ -20,6 +19,7 @@ if (!user) {
     console.log("************debut***********");
     user = JSON.parse(user);
     userId = user.userId;
+    console.log("user id " + userId);
     instance.defaults.headers.common['Authorization'] = user.token;
     } catch(ex) {
       user = {
@@ -50,6 +50,7 @@ export default createStore({
       bio: '',
     },
     post: {
+      id: '',
       publication: '',
       imageUrl: '',
       createdAt: Date,
@@ -93,7 +94,8 @@ export default createStore({
     
 	ADD_USERSLIKED_TO_POST(state){
 		const usersLiked = [];
-		const posts = state.posts;
+    const posts = state.posts;
+    console.log(posts)
 		posts.forEach(post => {
 			if (!post.usersLiked) {
 				const index = state.posts.indexOf(post);
@@ -109,7 +111,7 @@ export default createStore({
     },
   update_post(state, post) {
       for (let i = 0; i < state.posts.length; i++) {
-        if (state.posts[i].UserId == post.id) {
+        if (state.posts[i].id == post.id) {
           console.log(state.posts[i].publication, "==", post.publication);
           state.posts[i].publication = post.publication;
           state.posts[i].imageUrl = post.imageUrl;
@@ -118,7 +120,7 @@ export default createStore({
       }
   },
 
-deletePost(state, post) {
+_deletePost(state, post) {
     let index = 0;
       for (let postFind of state.posts) {
         if (postFind.id == post.id) {
@@ -155,26 +157,6 @@ deleteComment(state, commentaire) {
   addComment(state, commentaire) {
       state.commentaire = commentaire;
   },
-	LIKE_COMMENT(state, posts) {
-		state.posts = posts;
-	},
-	SET_ALL_USERS(state, allUsers) {
-		state.allUsers = allUsers;
-    },
-	ADD_FALSE_IMAGE_TO_AUTHORS(state) {
-		const posts = state.posts;
-		posts.forEach(post => {
-			if (post.user.imageURL == null) {
-				const index = state.posts.indexOf(post);
-				post.user.imageURL ="@/assets/user-regular.svg";
-				if (post.commentaires.user.imageURL == null) {
-					post.commentaires.user.imageURL ="@/assets/dev_images/user-regular.svg";
-				}
-				state.posts.splice(index, 1, post); 
-			}
-		});
-    },
-  
    CLEAR_STORE(state) {
         state.posts = [],
         state.user = {},
@@ -193,7 +175,7 @@ deleteComment(state, commentaire) {
         .then(function (response) {
         commit('setStatus', '');
           commit('logUser', response.data);
-        resolve(response);
+          resolve(response);
       })
         .catch(function () {
           commit('setStatus', 'error_login');
@@ -209,27 +191,61 @@ deleteComment(state, commentaire) {
       instance.post('/auth/signup', userInfo)
         .then(function () {
           commit('setStatus', 'created');
-        resolve();
+          resolve();
       })
         .catch(function () {
           commit('setStatus', 'error_signup');
         reject();
       });
-    });  
+    }) ;  
     },
   
-    getProfil: ({ commit }) => {
-        commit;
-        instance.get('/profile/')
-          .then(function (response) {
-            commit('userInfo', response.data.users);
-            console.log('====' + response.data.users);
+    getAllUser: ({ commit }) => {
+      commit;
+      console.log("heloooooooooo tous les utilisateut");
+      instance
+        .get('/profile/')
+        .then(function (response) {
+          commit('userInfo', response.data.users);
+          console.log('all usres ====' + response.data.users.length);
           })
           .catch(function () {
-            console.log('----------------');
+            console.log('Erreur ----------------');
       })
     },
+      
+    getUserById: ({ commit }) => {
+      commit;
+      console.log("get user " + userId);
+      if (!userId)
+      {
+        userId = localStorage.getItem('user').userId;
+        console.log("l'utilisateur a été null " + userId);
+      }
+      const getUserProfil = `/profile/me/${userId}`;     
+    instance
+      .get(getUserProfil)
+      .then((response) => {
+        commit('userInfo', response.data);
+        console.log("name : "+response.data.first_name)
+      })
+      .catch((error) => {
+        console.log("ereur : "+error);
+      });
+    },
      // ##########importer tous les posts##########
+    getPostById({ commit }, post) {
+      console.log("++getPostById+++"+ post.dynamicId);
+      const getPost = `/postes/post/${post.dynamicId}`;
+      instance.get(getPost)
+        .then((response) => {
+          commit("post", response.data.posts);
+        })
+        .catch((error) => {
+          console.log('ereur ereur ereur: '+error);
+    });
+    },
+    //""""""""""""""""""""""""getALLpost"""""""""""
      getAllPost({ commit }) {
       instance.get('/postes/')
         .then((response) => {
@@ -240,6 +256,33 @@ deleteComment(state, commentaire) {
           console.log('ereur ereur ereur: '+error);
     });
   },
+      // ########"""get My du post############
+      getAllMyPost({ commit }) {
+        // const userIdDynamic = posts.DynamicId;
+        console.log("get user " + userId);
+        if (!userId)
+        {
+          userId = localStorage.getItem('user').userId;
+          console.log("l'utilisateur a été null " + userId);
+        }
+        const getAllMyPost = `/postes/${userId}`;
+        return new Promise((resolve, reject) => {
+          instance
+            .get(getAllMyPost)
+            .then((response) => {
+              console.log(response);
+              // posts.thisMyPosts = response.data.myPost;
+              console.log("Recuperer mes posts");
+              commit("post", response.data.myPosts);
+              console.log("length : " + response.data.myPosts.length);
+              resolve(response);
+            })
+            .catch((error) => {
+              console.log(error);
+              reject(error);
+            });
+        });
+      },
     // ########"""Creation du post############
     createPost({ commit }, post) {
       console.log("create post avec l'utilisateur " + userId);
@@ -260,7 +303,7 @@ deleteComment(state, commentaire) {
           .then((response) => {
             commit("ADD_NEW_POST", response.data.post);
             resolve(response);
-           // window.location.reload();
+            //window.location.reload();
           })
           .catch((error) => {
             console.log("Erreur : "+error);
@@ -288,9 +331,9 @@ deleteComment(state, commentaire) {
           instance
             .delete(deletePost, formData)
             .then((response) => {
-              commit("deletePost", response.data.post);
+              commit("_deletePost", response.data.post);
               resolve(response);
-              window.location.reload();
+             // window.location.reload();
             })
             .catch((error) => {
               console.log("Error : "+error);
@@ -307,18 +350,18 @@ deleteComment(state, commentaire) {
         console.log("l'utulisateur a été null " + userId);
       }
       let formData = new FormData();
-      const postId = document.getElementById("idPost").innerText;
+      //const postId = document.getElementById("idPost").innerText;
       formData.append("publication", post.publication);
       formData.append("imageUrl", post.image);
       formData.append("like", post.like);
       formData.append("userId", userId);
       console.log("********modifier post********")
-      const createUpdatePost = `/postes/${postId}`;
+      const createUpdatePost = `/postes/${post.dynamicId}`;
         instance
           .put(createUpdatePost, formData)
           .then((response) => {
             commit("update_post", response.data.post);
-            window.location.reload();
+            //window.location.reload();
           })
           .catch((error) => {
             console.log(error);
@@ -365,7 +408,7 @@ deleteComment(state, commentaire) {
         });
     },
     //************************modifier commentaire************ */
-    updateComment({ commit }, commentaire) {
+  /*  updateComment({ commit }, commentaire) {
       console.log("modifier commentaire avec l'utilisateur " + userId);
       if (!userId)
       {
@@ -377,7 +420,6 @@ deleteComment(state, commentaire) {
       formData.append("comment", commentaire.comment);
       formData.append("userId", userId);
       const updateComment = `/comment/${commentaire.dynamicId}`;
-      console.log(updateComment);
       return new Promise((resolve, reject) => {
         instance
           .put(updateComment, formData)
@@ -391,7 +433,7 @@ deleteComment(state, commentaire) {
             reject(error);
           });
       });
-    },
+    },*/
     //************************delete commentaire************ */
     deleteComment({ commit }, commentaire) {
       console.log("supprimer le  commentaire : "+commentaire.dynamicId+" et l'utilisateur " + userId);
@@ -406,24 +448,88 @@ deleteComment(state, commentaire) {
     
       const deleteComment = `/comment/${commentaire.dynamicId}/${userId}`;
       if (confirmDelete) {
+        console.log("*****suprimer commentaire******");
         return new Promise((resolve, reject) => {
           instance
             .delete(deleteComment, formData)            
             .then((response) => {
-              console.log("----------debut delete-----------");
+              console.log(response.statusCode+"----------debut delete-----------");
               commit("deleteComment", response.data.comment);
-              console.log("----------l'utilisateur a ete suprimer -----------");
+              console.log("----------l'utilisateur a ete suprimer-----------");
               resolve(response);
               //window.location.reload();
             })
             .catch((error) => {
-              console.log(formData.get("userId") + " ----------");
-              console.log("Error" +error);
+               // how read code error 
+             // if (error.message.includes("403"))
+               // alert("tu pas authoriser pour suprimer ce commentaire" )
+              console.log("++++Error : " +error.message);
               reject(error);
             });
         });
       }
+      
     },
+    updateUser({ commit }, user) {
+      if (!userId)
+      {
+        userId = user.userId;
+        console.log("l'utulisateur a été null " + userId);
+      }
+      const updateUser = `/profile/me/${userId}`;
+      console.log(updateUser)
+      return new Promise((resolve, reject) => {
+        instance
+          .put(updateUser, {
+            first_name: user.thisFirst_name,
+            last_name: user.thisLast_name,
+            bio: user.thisBio,
+            email: user.thisEmail,
+            password: user.thisPassword,
+          })
+          .then((response) => {
+            commit("userInfo", response.data.user);
+            resolve(response);
+          })
+          .catch((error) => {
+            console.log(error);
+            reject(error);
+          });
+      });
+    },
+    deleteUser({ commit }, user) {
+      if (!userId)
+      {
+        userId = user.userId;
+        console.log("l'utulisateur a été null " + userId);
+      }
+      const confirmDelete = confirm(
+        "Êtes vous sûr de vouloir supprimer votre compte ?"
+      );
+      if (confirmDelete) {
+        const deleteUser = `/profile/me/${userId}`;
+        // const clearToken = localStorage.clear("userToken");
+        return new Promise((resolve, reject) => {
+          instance
+            .delete(deleteUser)
+            .then((response) => {
+              console.log("============"+response);
+              if (response) {
+                localStorage.clear("userToken");
+                commit("userInfo", response.data.user);
+              }
+              resolve(response);
+            })
+            .catch((error) => {
+              console.log("=============: "+error);
+              reject(error);
+            });
+        });
+      } else {
+        localStorage.getItem("userToken");
+      }
+    },
+
   },
  //################### modules ##############
   modules: {

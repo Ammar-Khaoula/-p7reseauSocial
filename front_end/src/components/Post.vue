@@ -7,8 +7,7 @@
         </router-link> 
        
         <h2> {{post.User.last_name}}  {{post.User.first_name}}</h2>
-        <p> {{post.createdAt}}</p>
-       
+        <p> {{ new Date(post.createdAt).toLocaleString() }}</p>
       </main> 
     </div>
    <section class="card-body">
@@ -23,9 +22,9 @@
           <ul class="dropdown-menu" aria-labelledby="defaultDropdown">
             <li>
               <button class="dropdown-item"  type="button" data-bs-toggle="modal"
-                data-bs-target="#postModal" data-bs-whatever="@mdo"
+                data-bs-target="#postModal"  data-bs-whatever="@mdo"
                 v-if="showButton == (user.id == post.userId)"
-                @click="showModal(post)">
+                @click="_getPostById">
                 Modifier post
               </button>
             </li>
@@ -37,18 +36,23 @@
             </li>
           </ul>
     </main>
-    <div class="pub_post" v-if="post">
+    <div class="pub_post" v-if="post"> 
         <p class="mb-3 tx-14 ms-3">
-          {{ post.publication }}
-          {{post.imageUrl}}
+         {{ post.id }} -- {{ post.publication }}
+          
         </p>  
         <a class="aCursor" data-bs-toggle="modal" data-bs-target="#postModalImage"
           data-bs-whatever="@mdo" @click="showModal(post)"
           v-if="post.imageUrl">
-          <img class="img-fluid d-flex" :src="post.imageUrl" alt="Image de Post"/>
+          <img class="rounded mx-auto d-block" :src="post.imageUrl" alt="Image de Post"/>
         </a>
+        <p>
+        <i class="fas fa-heart" v-on:click="likePost()">
+          <span>{{like}}</span>
+          </i> 
+        </p>
       </div>
-      <div class="card-footer">
+    <div class="card-footer">
         <div class="d-flex post-actions">
           <label class=" d-flex align-items-center text-muted me-4 text-decoration-none" for="commentText">
             <i class="mb-1 me-2 far fa-comment-alt"></i>
@@ -75,7 +79,7 @@ export default {
   name: 'Post',
    props:{
      post: Object,
-     commentaire: Object
+     commentaire: Object,
    }, 
    components: {
     commentWrite,
@@ -86,7 +90,7 @@ export default {
      return{
        formattedTime: "",
        now: 0,
-       created_At: moment(),
+       createdAt: moment(),
        showButton: true,
        User: '',
        userInfo:'',
@@ -95,38 +99,24 @@ export default {
        image: "",
        max: 280,
        preview: "",
+       like: 0,
      }
    },
    methods:{   
-    getFormattedTime(date) {
-      let now = moment(); //todays date
-      let end = moment(date); // another date
-      let duration = moment.duration(now.diff(end));
-      let month = duration.asMonths();
-      let days = duration.asDays();
-      let hours = duration.asHours();
-      let minutes = duration.asMinutes();
-      let seconds = duration.asSeconds();
-      if (seconds > 0 && seconds < 60) {
-        return Math.round(seconds) + "s";
-      }
-      if (minutes > 0 && minutes < 60) {
-        return Math.round(minutes) + "m";
-      }
-      if (hours > 0 && hours < 24) {
-        return Math.round(hours) + "h";
-      }
-      if (days > 0) {
-        return end.format("D MMM");
-      }
-      if (month > 0 && month <= 12) {
-        return end.format("D MMM YYY");
-      }
+    getFormattedTime (maDate){
+      maDate= moment.format('MM/DD/YYYY hh:mm')
+      console.log("===========:"+maDate);
+      console.log(this.createdAt);
     },
     deletePost: function () {
       const dynamicId = this.post.id;
       this.$store.dispatch("deletePost", { dynamicId });
     },
+    _getPostById: function () {
+     const dynamicId = this.post.id;
+     console.log(" id ++++++++"+dynamicId);
+     this.$store.dispatch("getPostById", { dynamicId });
+      },
       showModal(post) {
       this.$store.dispatch("post", post);
     },
@@ -136,13 +126,13 @@ export default {
       this.formattedTime = this.getFormattedTime(this.post.updatedAt);
     },
   },
-  created() {
+  /*created() {
     this.formattedTime = moment();
     this.formattedTime = this.getFormattedTime(this.post.updatedAt);
     setInterval(() => {
       this.now = moment();
     }, 3000);
-  },
+  },*/
    computed: {
     //  getting the current user via the state by mapGetters
     ...mapState(["user", "posts"]),

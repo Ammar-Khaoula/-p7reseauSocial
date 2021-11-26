@@ -10,7 +10,7 @@ const { Op } = require("sequelize");
 
 exports.findAllUsers = (req, res, next) => {
     User.findAll({
-        attributes: ["id", "first_name", "last_name", "bio"],
+        attributes: ["id", "first_name", "last_name", "bio", "imagesURL"],
       })
         .then((users) => {
           if (users) {
@@ -37,6 +37,7 @@ exports.userProfil = (req, res, next) => {
       "first_name",
       "last_name",
       "bio",
+      "imagesURL",
       "email",
       "isAdmin",
     ],
@@ -52,10 +53,20 @@ exports.userProfil = (req, res, next) => {
 exports.updateUser = (req, res, next) => {
     //Write to Update a User informations
   const loggedUserId = req.params.id;
-  console.log("user : " + loggedUserId);
+  console.log("user : " + loggedUserId)
 
-    const { first_name, last_name, bio, email, password, isAdmin} = req.body;
-  
+  ? {
+    imagesURL: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`,
+    
+    }
+    : {
+      first_name: req.body.first_name,
+      last_name: req.body.last_name,
+      bio: req.body.bio,
+      email: req.body.email,
+      password: req.body.password,
+      isAdmin: req.body.isAdmin,
+    }
     //ici declaration de regex
     const regexMail     = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     const regexPassword = /^(?=.*\d).{4,8}$/;
@@ -86,31 +97,35 @@ exports.updateUser = (req, res, next) => {
             if (password) {
               loggedUser.password = await bcryptjs.hash(password, 10);
             }
-
-              loggedUser.isAdmin = isAdmin;         
-
-            User.update(loggedUser.dataValues, {
-              where: {
-                id: loggedUserId,
-              },
-            })
-              .then((updated) => {
-                if (updated) {
-                  return res
-                    .status(200)
-                    .json({ message: "Utilisateur modifié", user: loggedUser });
-                } else {
-                  return res.status(403).json({
-                    error: "La modification d'utilisateur échoué !",
-                  });
-                }
-              })
-              .catch((error) => {
-                console.error(error.message);
-                return res.status(400).json({
-                  error: "Impossible a mettre a jour" +error,
-                });
+            loggedUser.isAdmin = isAdmin; 
+            console.log("Image", loggedUser.imagesURL);
+            if (loggedUser.imagesURL != null) {
+              const fileName = loggedUser.imagesURL.split("/images/")[1];
+              fs.unlink(`images/${fileName}`, () => {
+                User.update(loggedUser.dataValues, {
+                  where: {
+                    id: loggedUserId,
+                  },
+                })
+                  .then((updated) => {
+                    if (updated) {
+                      return res
+                        .status(200)
+                        .json({ message: "Utilisateur modifié", user: loggedUser });
+                    } else {
+                      return res.status(403).json({
+                        error: "La modification d'utilisateur échoué !",
+                      });
+                    }
+                  })
+                  .catch((error) => {
+                    console.error(error.message);
+                    return res.status(400).json({
+                      error: "Impossible a mettre a jour" +error,
+                    });
+                  }); 
               });
+            }
           }
         })
         .catch((error) => {

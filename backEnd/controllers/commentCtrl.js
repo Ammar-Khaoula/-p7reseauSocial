@@ -6,6 +6,7 @@ const User = db.Users; // user depuis model User/Auth
 const Comment = db.commentaires;
 
 const { Op } = require("sequelize");
+const { Console } = require("console");
 
 exports.createComment = (req, res, next) => {
       //Declarations des varibales pour récuperer les données du modèles
@@ -89,6 +90,8 @@ exports.updateMyComments = (req, res, next) => {
   const commentId = req.params.id;
   const userId = req.body.userId;
 
+  console.log("+++++ commentId : " + commentId);
+  console.log("user Id : " + userId);
     const commentObject = req.file
     ? {
         //like: req.body.like,
@@ -114,8 +117,7 @@ exports.updateMyComments = (req, res, next) => {
         },
       })
         .then((commentFind) => {
-          console.log("Hello", commentFind.comment);
-          console.log("Hello", commentFind.imageUrl);
+          console.log("debut update comment+++ ", commentFind.comment);
           if (commentFind.imageUrl != null) {
             const fileName = commentFind.imageUrl.split("/images/")[1];
             console.log("fileName", fileName);

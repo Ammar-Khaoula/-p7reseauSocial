@@ -1,16 +1,19 @@
 <template>
-        <div class="section">
+    <div class="section">
             <h1 v-if="mode == 'login'">connexion</h1>
             <h1 v-else>Inscription</h1>
             <p v-if="mode == 'login'">vous avez un compte ? <span class="span" @click = "switchToCreateAcount()"> créer un compte</span></p>
             <p v-else>vous avez déja un compte ? <span class="span" @click = "switchToLogin()"> connexion</span></p>
 
-            <form  class="form-group">
+        <form  class="form-group">
                 <div class="form-example name" v-if="mode == 'create'">
                   <input v-model="last_name" type="last_name" name="last_name" id="last_name" required class="form-control" placeholder="Entrer votre nom de famille">
                 </div>
                 <div class="form-example name" v-if="mode == 'create'">
                   <input v-model="first_name" type="first_name" name="first_name" id="first_name" required class="form-control" placeholder="Entrer votre prenom">
+                </div>
+                <div class="form-example name" v-if="mode == 'create'">
+                  <input v-model="bio" type="pseudo" name="pseudo" id="bio" class="form-control" placeholder="Entrer votre pseudo">
                 </div>
                 <div class="form-group ">
                   <input class="form-control" v-model="email" type="email" name="email" id="email" required placeholder="Entrez votre mail">
@@ -44,6 +47,7 @@ export default{
               mode: "login",
               first_name: "",
               last_name: "",
+              bio: "",
               email: "",
               password: "",
           }
@@ -110,10 +114,10 @@ export default{
     border: 6px #F1948A solid;
     border-radius: 25px;
     box-shadow: 7px 7px 15px 0px rgba(1, 27, 46, 0.96);
-    margin: 30px 250px;
-    width: 55%;
-    height: auto;
     background: white;
+    margin: auto;
+    width: 60%;
+    padding: 10px;
 }
 p{
     text-align: center;
@@ -158,5 +162,25 @@ input{
 .alert{
     color: red;
     font-weight: bolder;
+}
+
+@media (max-width: 768px){
+p{
+    font-size: 16px;
+}
+form{
+    margin: 5px;
+}
+input{
+    margin: auto;
+    width: 95%;
+    padding: 20px;
+}
+#connexion{
+    width: 120px;
+    height: 40px;
+    font-size: 16px;
+    font-weight: bold;
+}
 }
 </style>

@@ -53,12 +53,12 @@
   </div>
 </template>
 <script>
-import { mapState } from 'vuex'
+/*import { mapState } from 'vuex'
 export default {
     name:'updateComment',
     data(){
      return{
-       commentText: "",
+       comment: "",
        image: "",
        max: 280,
        preview: "",
@@ -82,7 +82,7 @@ export default {
       this.preview = null;
     },
      updateComment: function () {
-      const comment = this.commentText;
+      const comment = this.comment;
       const image = this.image;
       const dynamicId = this.commentaire.id;
       console.log(dynamicId);
@@ -94,5 +94,5 @@ export default {
     //  getting the current user via the state by mapGetters
     ...mapState(["commentaire"]),
   },
-}
+}*/
 </script>

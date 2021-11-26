@@ -21,7 +21,11 @@ module.exports = {
 		const last_name = req.body.last_name;
 		const password = req.body.password;
 		const bio = req.body.bio;
-  
+		const urlImage = req.file
+    ? `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
+    : null;
+		const imagesURL = urlImage;
+		console.log("++++++++++++++++" + imagesURL);
 		if (email == null || first_name == null || last_name == null || password == null) {
 			return res.status(400).json({ 'error': 'missing parameters' });
 		}
@@ -69,7 +73,7 @@ module.exports = {
 					last_name: last_name,
 					password: bcryptedPassword,
 					bio: bio,
-					subscriptionDate: Date.now(),
+					imagesURL: imagesURL,
 					isAdmin: 0
 				})
 					.then(function (newUser) {
@@ -97,7 +101,7 @@ module.exports = {
 		bio = req.body.bio;
 		first_name = req.body.first_name;
 		last_name = req.body.last_name;
-
+		imagesURL = req.body.imagesURL;
 		if (email == null || password == null) {
 			return res.status(400).json({ 'error': 'paramètres manquants' });
 		}
@@ -142,7 +146,7 @@ module.exports = {
 						bio: userFound.bio,
 						email: req.body.email,
 						password: req.body.password,
-						imagesURL: userFound.imagesURL,
+						imagesURL: req.body.imagesURL,
 						isAdmin: userFound.isAdmin,
 					};
 			} else {

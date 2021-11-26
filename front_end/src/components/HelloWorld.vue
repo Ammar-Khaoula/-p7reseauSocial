@@ -27,6 +27,7 @@ export default {
       this.$router.push({ name: '/login' });
     },
   },
+
   computed: {
     //  getting the current user via the state by mapGetters
     ...mapState (["user"]),

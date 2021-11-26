@@ -18,6 +18,7 @@
                 <input class="form-control mr-sm-2 bg-light"
                   v-model="publication" :maxlength="max" type="text"
                   ref="resetInput" placeholder="Publier ici..." aria-label="publication" id="publication"/>
+                  
               </div>
               <!-- add button here -->
   <label class="addImage">
@@ -37,6 +38,19 @@
     </div>
           <!-- Preview image end here -->
     </div>
+
+  <div class="pub_post" v-if="post"> 
+        <p class="mb-3 tx-14 ms-3">
+         {{ post.id }} -- {{ post.publication }}
+          
+        </p>  
+        <a class="aCursor" data-bs-toggle="modal" data-bs-target="#postModalImage"
+          data-bs-whatever="@mdo" @click="showModal(post)"
+          v-if="post.imageUrl">
+          <img class="rounded mx-auto d-block" :src="post.imageUrl" alt="Image de Post"/>
+        </a>
+      </div>
+
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary"
             data-bs-dismiss="modal" @click="closedButton()">
@@ -97,4 +111,5 @@ export default {
     ...mapState(["user", "posts", "post"]),
   },
 };
+
 </script>

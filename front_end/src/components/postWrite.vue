@@ -11,7 +11,8 @@
         </label>
         <!--<div class="input-group input-group-sm mb-3 mt-3 d-flex flex-row justify-content-start">-->
       <main class="col-sm-5 col-md-8 from_input">
-        <input class="form-control mr-sm-2 bg-light" v-model="publication" type="text" placeholder="Publier ici..." aria-label="publication" id="publication"/>
+        <textarea class="form-control mr-sm-2 bg-light" v-model="publication" type="text" placeholder="Publier ici..." aria-label="publication" id="publication">
+        </textarea>
       </main>
     </div> 
         <div>
@@ -31,8 +32,7 @@
               </button>
             </div>
           </template>
-        </div>
-      
+        </div>  
     </section>   
   </div>
 </template>
@@ -93,12 +93,10 @@ export default {
 .card-header{
   background: #FDEDEC;
   width: 80%;
-  height: 280px;
   margin-left: 10%;
 }
 .btn{
-  position: relative;
-  bottom: 40px;
+
   width: 120px;
 }
 .addImage span{
@@ -117,7 +115,6 @@ input{
   bottom: 50px;
   margin-left: 10%;
   height: 120px;
-  width: 600px;
 }
 
 </style>

@@ -7,6 +7,31 @@ const Comment = db.commentaires;
 
 const { Op } = require("sequelize");
 
+exports.getPostById = (req, res, next) => {
+  const postId = req.params.id;
+  console.log("postId :", postId);
+  Post.findOne({
+    where: {
+      id: postId,
+    },
+    attributes: [
+      "id",
+      "publication",
+      "imageUrl",
+      "like",
+      "updatedAt",
+      "UserId",
+    ],
+  }) //A veifier
+    .then((post) => {
+      res.status(200).json(post); //recuperer tous le model de user
+    })
+    .catch((error) => {
+      res.status(404).json(error);
+    });
+};
+
+
 exports.getAllPost = (req, res, next) => {
     Post.findAll({
         include: [
