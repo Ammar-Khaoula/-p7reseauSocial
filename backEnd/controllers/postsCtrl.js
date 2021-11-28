@@ -4,6 +4,7 @@ const fs = require("fs");
 const Post = db.posts; // post depuis model Post
 const User = db.Users; // user depuis model User/Auth
 const Comment = db.commentaires;
+const LikePost = db.Like_Post;
 
 const { Op } = require("sequelize");
 
@@ -18,7 +19,7 @@ exports.getPostById = (req, res, next) => {
       "id",
       "publication",
       "imageUrl",
-      "like",
+      "likes",
       "updatedAt",
       "UserId",
     ],
@@ -37,15 +38,15 @@ exports.getAllPost = (req, res, next) => {
         include: [
           {
             model: User,
-            attributes: ["last_name", "first_name"],
+            attributes: ["last_name", "first_name", "imagesURL", "isAdmin"],
           },
           {
             model: Comment,
-            attributes: ["id", "comment",  "createdAt", "userId"],
+            attributes: ["id", "comment",  "createdAt", "userId", "imageUrl"],
             include: [
               {
                 model: User,
-                attributes: ["last_name", "first_name"],
+                attributes: ["last_name", "first_name", "imagesURL", "isAdmin"],
               },
             ],
           },
@@ -72,15 +73,15 @@ exports.getAllPostbyUser = (req, res, next) => {
     include: [
       {
         model: User,
-        attributes: ["first_name", "last_name"],
+        attributes: ["first_name", "last_name", "imagesURL", "isAdmin"],
       },
       {
         model: Comment,
-        attributes: ["comment", "createdAt", "UserId"],
+        attributes: ["comment", "createdAt", "UserId", "imageUrl"],
         include: [
           {
             model: User,
-            attributes: ["last_name", "first_name"],
+            attributes: ["last_name", "first_name", "imagesURL", "isAdmin"],
           },
         ],
       },
@@ -122,11 +123,11 @@ exports.createPost = (req, res, next) => {
           include: [
             {
               model: User,
-              attributes: ["last_name", "first_name"],
+              attributes: ["last_name", "first_name", "imagesURL", "isAdmin"],
             },
             {
               model: Comment,
-              attributes: ["id", "comment",  "createdAt"],
+              attributes: ["id", "comment",  "createdAt", "imageUrl"],
             },
           ],
         })
@@ -156,8 +157,10 @@ exports.createPost = (req, res, next) => {
     });
 };
 exports.updatePost = (req, res, next) => {
+  console.log("=============update=======");
+ 
     const postId = req.params.id; // l'id du post
-  const userId = req.body.userId; //l'id de user
+    const userId = req.body.userId; //l'id de user
     const postObject = req.file
       ? {
           // Si la personne rajoute un nouvel image
@@ -166,7 +169,7 @@ exports.updatePost = (req, res, next) => {
           }`,
         }
       : {          
-        like: req.body.like,
+        likes: req.body.likes,
         publication: req.body.publication
         }; // Si non, on ne modifie que le postContent
 
@@ -421,4 +424,140 @@ exports.deletePost = (req, res, next) => {
      // error.console(error.message);
       return res.status(500).json({ error });
     });*/
+};
+exports.likeApost = (req, res, next) => {
+  console.log("=============lile=======");
+  const postId = req.body.postId;
+	const userId = req.body.userId;
+  const likeValue = req.body.like;
+  Post.findByPk(postId)
+    .then(post => {
+      switch(likeValue) {
+        case 1: // le user like le post
+        console.log("=============like value ok=======");
+          // Ajouter le couple postId userId de la table de jointure
+          LikePost.create({ postId, userId })
+            .then(() => {
+              console.log("=============update like=======");
+              // Mettre à jour le post
+              post.update(
+                { likes: post.likes + 1 },
+                { where: { id: postId } },
+              ).then(() => {
+                console.log("=============c'est modifie !!!! ======");
+                Post.findAll({
+                  order: [['createdAt', 'DESC']],
+                  attributes: { 
+                    exclude: ['updatedAt']
+                  },
+                  include: [
+                  {
+                    model: User,
+                    attributes: ['first_name', 'last_name', 'imagesURL', 'isAdmin']
+                  },
+                  {
+                    model: Comment,
+                    attributes: ['comment', 'UserId', 'id', "imageUrl"],
+                    include: [{
+                      model: User,
+                      attributes: ['first_name', 'last_name', 'imagesURL', 'isAdmin']
+                    }]
+                  }
+                  ]
+                })
+                .then( posts => { 
+                  // Ajout de la table des likes au renvoi des posts
+                  LikePost.findAll()
+                    .then((likes) => {
+                      console.log("=============find all=======");
+                    likes.forEach(like => {
+                      let post = posts.findIndex(search => search.id == like.postId);
+                      if (post != null) {
+                        if(posts[post].dataValues.usersLiked === undefined){
+                          posts[post].dataValues.usersLiked = [like.userId];
+                        } else {
+                          posts[post].dataValues.usersLiked.push(like.userId);
+                        }
+                      }
+                    })
+                    res.status(201).send({posts});
+                  })
+                  .catch(error => { 
+                    res.status(500).send({ error, message: "Impossible d'ajouter la table des likes aux posts"});
+                  })
+                })
+                .catch( error => res.status(500).send({ error,  message:"Impossible d'afficher les posts, like case 1" }));
+              })
+            })
+            .catch(error => {
+              res.status(500).send({error, message: "Impossible d'ajouter le couple userId, postId à la table de jointure LikePost"});
+            })
+    
+          break;
+          case 0: // le user reclique pour retirer son like
+
+          // Supprimer le couple postId userId de la table de jointure
+          LikePost.destroy({
+            where: { postId: postId, userId: userId}
+          })
+          .then(() => {
+  
+            // Mise à jour du post
+            post.update(
+              { likes: post.likes - 1},
+              { where: { id : postId }}
+            )
+            .then (() => {
+              Post.findAll({
+                order: [['createdAt', 'DESC']],
+                attributes: { 
+                  exclude: ['updatedAt']
+                },
+                include: [
+                {
+                  model: User,
+                  attributes: ['first_name', 'last_name', 'imagesURL', 'isAdmin']
+                },
+                {
+                  model: Comment,
+                  attributes: ['comment', 'userId', 'id', "imageUrl"],
+                  include: [{
+                    model: User,
+                    attributes: ['first_name', 'last_name', 'imagesURL', 'isAdmin']
+                  }]
+                }
+                ]
+              })
+              .then( posts => {
+                // Ajout de la table des likes au renvoi des posts
+                LikePost.findAll()
+                .then((likes) => {
+                  likes.forEach(like => {
+                    let post = posts.findIndex(search => search.id == like.postId);
+                    if (post != null) {
+                      if(posts[post].dataValues.usersLiked === undefined){
+                        posts[post].dataValues.usersLiked = [like.userId];
+                      } else {
+                        posts[post].dataValues.usersLiked.push(like.userId);
+                      }
+                    }
+                  })
+                  res.status(201).send({posts});
+                })
+                .catch(error => { 
+                  res.status(500).send({ error, message: "Impossible d'ajouter la table des likes aux posts"});
+                })
+              })
+              .catch( error => res.status(500).send({ error,  message:"Impossible de récupérer les posts, like case 0" }));
+            })
+          })
+          .catch(error => {
+            res.status(500).send({error, message: "Impossible de supprimer le couple postId, userId de la table de jointure LikePost"});
+          })
+          break;
+      }
+    })
+    .then(() => res.status(201))
+    .catch( error => res.status(500).send({ error, message: "Impossible de mettre à jour le post"} ));
+  
 };

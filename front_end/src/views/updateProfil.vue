@@ -177,13 +177,13 @@ export default {
       this.$store
         .dispatch("deleteUser")
         .then((response) => {
-          console.log(response);
+          console.log("user suprimer !!! "+response);
           if (response) {
-            this.$router.push({ name: "Login" });
+            this.$router.push('/');
           }
         })
         .catch((error) => {
-          console.log(error);
+          console.log("ereurrrrrrrrr: "+ error);
         });
     },
     // createUpdatePost
@@ -193,6 +193,7 @@ export default {
       const thisBio = this.bio;
       const thisEmail = this.email;
       const thisPassword = this.password;
+      const thisIsAdmin = this.isAdmin;
       this.$store
         .dispatch("updateUser", {
           thisFirst_name,
@@ -200,6 +201,7 @@ export default {
           thisBio,
           thisEmail,
           thisPassword,
+          thisIsAdmin
         })
         .then((response) => {
           console.log(response);

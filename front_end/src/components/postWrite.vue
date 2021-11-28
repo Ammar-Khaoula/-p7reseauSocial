@@ -47,7 +47,7 @@ export default {
          publication:'',
          image:'',
          preview:'',
-         like:'',
+         likes:'',
          User: {},
          UserId: ''
       };
@@ -72,14 +72,14 @@ export default {
     createPost(){
       const publication = this.publication;
       const image = this.image;
-      const like = this.like;
+      const likes = this.likes;
       const userId = this.userId;
       console.log(image+"**************");
-      this.$store.dispatch("createPost", { publication, image, like, userId });
+      this.$store.dispatch("createPost", { publication, image, likes, userId });
       this.image = null;
       this.preview = null;
       this.publication = "";
-      this.like= 0;
+      this.likes= 0;
     }
   },
     computed: {

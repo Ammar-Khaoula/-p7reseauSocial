@@ -1,45 +1,45 @@
 <template>
   <div class="card-header" style="width:768px; margin-left:10%;">
     <div class="body">
-      <main class="d-flex align-items-center justify-content-between">
-        <router-link :to="{ name: 'MyProfil'}">
+        <div class="d-flex align-items-center justify-content-between">
           <img class="rounded-circle profile-pic" src="../assets/icon.png"  alt="profile image"/>
-        </router-link> 
-       
-        <h2> {{post.User.last_name}}  {{post.User.first_name}}</h2>
-        <p> {{ new Date(post.createdAt).toLocaleString() }}</p>
-      </main> 
+          <h2 @click="getMyProfil"> {{post.User.last_name}}  {{post.User.first_name}} </h2>
+          <p> {{ new Date(post.createdAt).toLocaleString() }}</p>
+        </div> 
+
     </div>
    <section class="card-body">
+              <!--=========== a supprimer  -->
+          <p>{{user.userId}} -- {{post.UserId}} -- {{user.isAdmin}}</p>
      <main
           class="btn-group"
-          v-if="showButton == (user.id == post.userId || user.isAdmin == 1)">
+          v-if="(user.userId == post.UserId) || user.isAdmin">
           <button
             class="btn btn-Info dropdown-toggle me-5"
             type="button" id="defaultDropdown1" data-bs-toggle="dropdown"
             data-bs-auto-close="true" aria-expanded="false">
           </button>
-          <ul class="dropdown-menu" aria-labelledby="defaultDropdown">
+          <ul  class="dropdown-menu" aria-labelledby="defaultDropdown">
             <li>
-              <button class="dropdown-item"  type="button" data-bs-toggle="modal"
-                data-bs-target="#postModal"  data-bs-whatever="@mdo"
-                v-if="showButton == (user.id == post.userId)"
-                @click="_getPostById">
+              <button class="dropdown-item"  type="button"                  
+                @click="_updatePost" >
                 Modifier post
               </button>
             </li>
             <li>
-              <button class="dropdown-item" @click="deletePost"
-                v-if=" showButton == (user.id == post.userId || user.isAdmin == 1)">
+              <button class="dropdown-item" @click="deletePost">
                 Supprimer post
               </button>
             </li>
           </ul>
     </main>
-    <div class="pub_post" v-if="post"> 
+    <div class="pub_post" v-if="post">
+      <!--<span>Message is: {{ likes }}</span>
+     <br> 
+     <input type="text" v-model="likes" placeholder="edit me">-->
+
         <p class="mb-3 tx-14 ms-3">
-         {{ post.id }} -- {{ post.publication }}
-          
+         {{ post.id }} -- {{ post.publication }}  
         </p>  
         <a class="aCursor" data-bs-toggle="modal" data-bs-target="#postModalImage"
           data-bs-whatever="@mdo" @click="showModal(post)"
@@ -48,7 +48,7 @@
         </a>
         <p>
         <i class="fas fa-heart" v-on:click="likePost()">
-          <span>{{like}}</span>
+          <span>{{post.likes}}</span>
           </i> 
         </p>
       </div>
@@ -56,7 +56,7 @@
         <div class="d-flex post-actions">
           <label class=" d-flex align-items-center text-muted me-4 text-decoration-none" for="commentText">
             <i class="mb-1 me-2 far fa-comment-alt"></i>
-            Commentaire
+            Commentaire {{post.commentaires.length}}
           </label>
         </div>
          <commentWrite :postId="post.id"></commentWrite>
@@ -80,6 +80,7 @@ export default {
    props:{
      post: Object,
      commentaire: Object,
+  
    }, 
    components: {
     commentWrite,
@@ -91,7 +92,6 @@ export default {
        formattedTime: "",
        now: 0,
        createdAt: moment(),
-       showButton: true,
        User: '',
        userInfo:'',
        commentaires: [],
@@ -99,7 +99,7 @@ export default {
        image: "",
        max: 280,
        preview: "",
-       like: 0,
+       likes: 0,
      }
    },
    methods:{   
@@ -112,13 +112,26 @@ export default {
       const dynamicId = this.post.id;
       this.$store.dispatch("deletePost", { dynamicId });
     },
+    _updatePost: function(){
+      const dynamicId = this.post.id;
+     // this.$router.push({ name: "updatePost"  }); 
+      this.$store.dispatch("updatePost", { dynamicId });
+    },
     _getPostById: function () {
      const dynamicId = this.post.id;
      console.log(" id ++++++++"+dynamicId);
      this.$store.dispatch("getPostById", { dynamicId });
       },
+
       showModal(post) {
       this.$store.dispatch("post", post);
+    },
+     getMyProfil: function () {
+       const dynamicId = this.post.UserId;
+       console.log("----------------l'utulisateur est :---- "+ dynamicId);
+        this.$router.push({ name: "MyProfil" });
+        this.$store.dispatch("getUserById", { dynamicId });
+        this.$store.dispatch("getAllMyPost", {dynamicId});
     },
   },
   watch: {
@@ -163,8 +176,10 @@ export default {
 .card-footer{
   background: #EBF5FB;
 }
-
-a img{
+a{
+  text-decoration: none;
+}
+.d-flex img{
   height: 150px;
 }
 h3{

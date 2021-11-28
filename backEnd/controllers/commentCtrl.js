@@ -19,6 +19,8 @@ exports.createComment = (req, res, next) => {
     ? `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
     : null;
   console.log("===========" + req.body.comment + " user "+userId);
+  console.log("====" + postId);
+
   const comment = new Comment({
     comment: commentPost,
     imageUrl: urlImage,
@@ -35,7 +37,7 @@ exports.createComment = (req, res, next) => {
           include: [
             {
               model: User,
-              attributes: ["last_name", "first_name"],
+              attributes: ["last_name", "first_name", "imagesURL", "isAdmin"],
             },
           ],
         })
@@ -64,7 +66,7 @@ exports.getAllComments = (req, res, next) => {
         include: [
           {
             model: User,
-            attributes: ["email"],
+            attributes: ["email", "imagesURL", "isAdmin"],
           },
           {
             model: Post, 
@@ -84,6 +86,34 @@ exports.getAllComments = (req, res, next) => {
           console.error(error.message);
           return res.status(500).json({ error });
         });
+};
+
+exports.getAllCommentbyUser = (req, res, next) => {
+  const userId = req.params.id;
+
+  Comment.findAll({
+  where: { UserId: userId },
+  include: [
+    {
+      model: User,
+      attributes: ["first_name", "last_name", "imagesURL", "isAdmin"],
+    },
+  ],
+  order: [["id", "DESC"]],
+})
+    .then((myComment) => {
+      console.log("*****************length :    " + myComment.length);
+
+    if (myComment) {
+      return res.status(200).json({ message: "comments trouvé", myComment });
+    } else {
+      return res.status(404).json({ message: "Pas de comment!" });
+    }
+  })
+  .catch((error) => {
+    console.error(error.message);
+    return res.status(400).json({ error });
+  });
 };
 exports.updateMyComments = (req, res, next) => {
 

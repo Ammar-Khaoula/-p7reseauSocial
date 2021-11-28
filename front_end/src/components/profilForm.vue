@@ -11,7 +11,7 @@
                   </table>
                   </router-link>
               </li>
-              <li>
+              <!--<li>
                 <router-link class="item" :to="{ name: 'allUser' }">
                   <table>
                     <th>
@@ -20,7 +20,7 @@
                     </th>
                   </table>
                   </router-link>
-              </li>
+              </li>-->
               <li>
                 <router-link class="item" :to="{ name: 'updateProfil' }">
                       <table>
@@ -50,16 +50,13 @@ export default{
   },
   
      mounted: function() {
-    this.$router.push('/MyProfil');
+    //this.$router.push('/MyProfil');
      //const userIdDynamic = this.$store.state.user.userId;
      console.log("debut get all profile: ");
-        if (this.$store.state.user.userId == -1){
-        this.$router.push('/');
-        return;     
-        }
+
         //this.$store.dispatch('getAllUser');
-        //this.$store.dispatch("getUserById");
-        this.$store.dispatch("getAllMyPost");
+       // this.$store.dispatch("getUserById");
+       // this.$store.dispatch("getAllMyPost");
    },
    computed: {
        ...mapState ({

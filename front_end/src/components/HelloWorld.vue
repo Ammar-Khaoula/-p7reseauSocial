@@ -3,8 +3,11 @@
 <div class="header">
         <div><img id="icon" alt="logo" src="../assets/icone.png"></div>
          <div class="nav">
-            <router-link :to="{ name: 'MyProfil' }" class="a_profil" aria-current="page" href="#"> 
+            <div @click="getMyProfil" class="a_profil" aria-current="page" href="#"> 
                profile 
+            </div>
+            <router-link class="item" :to="{ name: 'allUser' }">
+               <i class="fas fa-users"></i>
             </router-link>
             <router-link :to="{ name: 'login' }" href="javascript:void(0)" @click="logOutClick"
               class="link-acceuil"> Deconnexion
@@ -26,6 +29,15 @@ export default {
       this.$store.dispatch("user", null);
       this.$router.push({ name: '/login' });
     },
+         getMyProfil: function () {
+       console.log("--------Mon profile :---- ");
+        this.$router.push({ name: "MyProfil" });
+        if (this.$store.state.user.userId == -1){
+        this.$router.push('/');
+        return;     
+        }
+        this.$store.dispatch("getUserById");
+        this.$store.dispatch("getAllMyPost");    },
   },
 
   computed: {

@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const asyncLib = require('async');
 const jwt = require('../middleware/auth');
 const bcryptjs = require('bcryptjs');
+const user = require('../models/user');
 
 
 
@@ -21,11 +22,11 @@ module.exports = {
 		const last_name = req.body.last_name;
 		const password = req.body.password;
 		const bio = req.body.bio;
-		const urlImage = req.file
+		const imageUrl = req.body.imagesURL;
+		/*const urlImage = req.file
     ? `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
     : null;
-		const imagesURL = urlImage;
-		console.log("++++++++++++++++" + imagesURL);
+		const imagesURL = urlImage;*/
 		if (email == null || first_name == null || last_name == null || password == null) {
 			return res.status(400).json({ 'error': 'missing parameters' });
 		}
@@ -73,8 +74,8 @@ module.exports = {
 					last_name: last_name,
 					password: bcryptedPassword,
 					bio: bio,
-					imagesURL: imagesURL,
-					isAdmin: 0
+					imagesURL: imageUrl,
+					isAdmin: 0,
 				})
 					.then(function (newUser) {
 						done(newUser);
@@ -86,7 +87,8 @@ module.exports = {
 		], function (newUser) {
 			if (newUser) {
 				return res.status(201).json({
-					'userId': newUser.id
+					'userId': newUser.id,
+					'isAdmin': newUser.isAdmin
 				});
 			} else {
 				return res.status(500).json({ 'error': 'cannot add user' });
@@ -137,6 +139,7 @@ module.exports = {
 			if (userFound) {
 				return res.status(201).json({
 					'userId': userFound.id,
+					'isAdmin' : userFound.isAdmin,
 					'token': jwt.generateTokenForUser(userFound)
 				}),
 					userFound = {
@@ -146,7 +149,7 @@ module.exports = {
 						bio: userFound.bio,
 						email: req.body.email,
 						password: req.body.password,
-						imagesURL: req.body.imagesURL,
+						imagesURL: userFound .imagesURL,
 						isAdmin: userFound.isAdmin,
 					};
 			} else {

@@ -13,18 +13,20 @@ if (!user) {
   user = {   
     userId: -1,
     token: '',
+    isAdmin: '',
   };
 } else {
   try {
     console.log("************debut***********");
     user = JSON.parse(user);
     userId = user.userId;
-    console.log("user id " + userId);
+    console.log("user id========= " + user);
     instance.defaults.headers.common['Authorization'] = user.token;
     } catch(ex) {
       user = {
         userId: -1,
         token: '',
+        isAdmin: '',
       };
    }
 }
@@ -43,7 +45,8 @@ export default createStore({
     createdAt: Date,
     token: '',
     userInfo: {
-      id : '',
+      id: '',
+      isAdmin: '',
       first_name: '',
       last_name: '',
       email: '',
@@ -54,7 +57,7 @@ export default createStore({
       publication: '',
       imageUrl: '',
       createdAt: Date,
-      like: 0,
+      likes: 0,
       UserId: '',
     },
   },
@@ -76,6 +79,7 @@ export default createStore({
     logUser: function (state, user) {
       instance.defaults.headers.common['Authorization'] = user.token;
       localStorage.setItem('user', JSON.stringify(user));
+      console.log("=====================" +localStorage.getItem('user'));
       state.user = user;
     },
     userInfo: function (state, userInfo) {
@@ -209,20 +213,28 @@ deleteComment(state, commentaire) {
           commit('userInfo', response.data.users);
           console.log('all usres ====' + response.data.users.length);
           })
-          .catch(function () {
-            console.log('Erreur ----------------');
+          .catch(function (error) {
+            console.log('Erreur ----------------'+error);
       })
     },
       
-    getUserById: ({ commit }) => {
+    getUserById: ({ commit }, post) => {
       commit;
-      console.log("get user " + userId);
-      if (!userId)
+      let id = null;
+      if (post == null)
       {
+        console.log("user de la session est : " + userId);
+      if (!userId) {
         userId = localStorage.getItem('user').userId;
         console.log("l'utilisateur a été null " + userId);
       }
-      const getUserProfil = `/profile/me/${userId}`;     
+        id = userId;
+      } else {
+        console.log("dynamic user " + post.dynamicId);
+        id = post.dynamicId;
+      }
+      console.log("************l'id est******" + id);
+      const getUserProfil = `/profile/me/${id}`;     
     instance
       .get(getUserProfil)
       .then((response) => {
@@ -257,15 +269,23 @@ deleteComment(state, commentaire) {
     });
   },
       // ########"""get My du post############
-      getAllMyPost({ commit }) {
-        // const userIdDynamic = posts.DynamicId;
-        console.log("get user " + userId);
-        if (!userId)
+      getAllMyPost({ commit }, post) {
+        let id = null;
+        if (post == null)
         {
+          console.log("user de la session est : " + userId);
+        if (!userId) {
           userId = localStorage.getItem('user').userId;
           console.log("l'utilisateur a été null " + userId);
         }
-        const getAllMyPost = `/postes/${userId}`;
+          id = userId;
+        } else {
+          console.log("dynamic user " + post.dynamicId);
+          id = post.dynamicId;
+        }
+        console.log("************l'id est******" + id);
+
+        const getAllMyPost = `/postes/${id}`;
         return new Promise((resolve, reject) => {
           instance
             .get(getAllMyPost)
@@ -294,7 +314,7 @@ deleteComment(state, commentaire) {
       let formData = new FormData();
       formData.append("publication", post.publication);
       formData.append("image", post.image);
-      formData.append("like", post.like);
+      formData.append("likes", post.likes);
       formData.append("userId", userId);
       console.log("********create post********")
       const createPost = "/postes/";
@@ -343,18 +363,12 @@ deleteComment(state, commentaire) {
       }
     },
     updatePost({ commit }, post) {
-      console.log("modifier post avec l'utilisateur " + userId);
-      if (!userId)
-      {
-        userId = user.userId;
-        console.log("l'utulisateur a été null " + userId);
-      }
+      console.log("modifier post avec l'utilisateur " + post.dynamicId);
       let formData = new FormData();
-      //const postId = document.getElementById("idPost").innerText;
       formData.append("publication", post.publication);
       formData.append("imageUrl", post.image);
-      formData.append("like", post.like);
-      formData.append("userId", userId);
+      formData.append("likes", post.likes);
+      formData.append("userId", post.dynamicId);
       console.log("********modifier post********")
       const createUpdatePost = `/postes/${post.dynamicId}`;
         instance
@@ -477,7 +491,7 @@ deleteComment(state, commentaire) {
         console.log("l'utulisateur a été null " + userId);
       }
       const updateUser = `/profile/me/${userId}`;
-      console.log(updateUser)
+      console.log("======= "+updateUser)
       return new Promise((resolve, reject) => {
         instance
           .put(updateUser, {
@@ -486,6 +500,7 @@ deleteComment(state, commentaire) {
             bio: user.thisBio,
             email: user.thisEmail,
             password: user.thisPassword,
+            isAdmin: user.thisIsAdmin
           })
           .then((response) => {
             commit("userInfo", response.data.user);
@@ -498,6 +513,7 @@ deleteComment(state, commentaire) {
       });
     },
     deleteUser({ commit }, user) {
+      console.log("user id a supprimer : " + userId);
       if (!userId)
       {
         userId = user.userId;
@@ -506,6 +522,7 @@ deleteComment(state, commentaire) {
       const confirmDelete = confirm(
         "Êtes vous sûr de vouloir supprimer votre compte ?"
       );
+      console.log("=============== debut delete user========");
       if (confirmDelete) {
         const deleteUser = `/profile/me/${userId}`;
         // const clearToken = localStorage.clear("userToken");
@@ -515,7 +532,7 @@ deleteComment(state, commentaire) {
             .then((response) => {
               console.log("============"+response);
               if (response) {
-                localStorage.clear("userToken");
+                localStorage.clear("token");
                 commit("userInfo", response.data.user);
               }
               resolve(response);
@@ -526,7 +543,8 @@ deleteComment(state, commentaire) {
             });
         });
       } else {
-        localStorage.getItem("userToken");
+        console.log("====== nooooooo ===========")
+        localStorage.getItem("token");
       }
     },
 

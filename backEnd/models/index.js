@@ -37,6 +37,9 @@ db.Sequelize = Sequelize;
 const user = (db.Users = require("./user")(sequelize, Sequelize));
 const post = (db.posts = require("./post")(sequelize, Sequelize));
 const comment = (db.commentaires = require("./commentaire")(sequelize, Sequelize));
+db.Like_Post = sequelize.define('Like_Post', {}, { timestamps: false});
+db.Like_Comment = sequelize.define('Like_Comment', {}, { timestamps: false });
+
 //Un usert peut avoir plusieurs post, et un post appartient à cet users la
 user.hasMany(post, {
   onDelete: 'CASCADE',
@@ -69,5 +72,36 @@ comment.belongsTo(post, {
   allowNull: false,
 });
 
+user.belongsToMany(comment, {
+	through: db.Like_Comment,
+	foreignKey: 'commentId',
+	onDelete: 'CASCADE',
+	onUpdate: 'NO ACTION',
+	allowNull: false
+});
+
+comment.belongsToMany(user, {
+	through: db.Like_Comment,
+	foreignKey: 'userId',
+	onDelete: 'CASCADE', 
+	onUpdate: 'NO ACTION',
+	allowNull: false
+});
+
+
+post.belongsToMany(user, {
+	through: db.Like_Post,
+	foreignKey: 'userId',
+	onDelete: 'CASCADE',
+	onUpdate: 'NO ACTION',
+	allowNull: false
+});
+user.belongsToMany(post, {
+	through: db.Like_Post,
+	foreignKey: 'postId',
+	onDelete: 'CASCADE',
+	onUpdate: 'NO ACTION',
+	allowNull: false
+});
 
 module.exports = db;

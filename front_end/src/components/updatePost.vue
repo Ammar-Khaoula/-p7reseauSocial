@@ -14,14 +14,20 @@
             <div class="input-group input-group-sm mb-3 mt-3 d-flex flex-row justify-content-start">
               <!-- image -->
               <img class="rounded-circle img-xs" src="../assets/icon.png" alt="" style="width:200px; height:200px;"/>
+              
               <div class="col-sm-5 col-md-8 ms-3">
                 <input class="form-control mr-sm-2 bg-light"
-                  v-model="publication" :maxlength="max" type="text"
-                  ref="resetInput" placeholder="Publier ici..." aria-label="publication" id="publication"/>
+                      v-model="publication"
+                     :maxlength="max"
+                      type="text"
+                     ref="resetInput" 
+                     placeholder="Publier ici..." 
+                     aria-label="publication" 
+                     id="publication"/>
                   
               </div>
               <!-- add button here -->
-  <label class="addImage">
+   <label class="addImage">
     <span class="title-image">Ajouter image</span>
     <input accept="image/*" type="file" id="FileInput" ref="image"
       name="image_attachment_upload" v-on:change="handleFileUpload()"/>
@@ -37,19 +43,20 @@
         </template>
     </div>
           <!-- Preview image end here -->
-    </div>
+  
+   </div>
 
-  <div class="pub_post" v-if="post"> 
+  <!--<div class="pub_post" v-if="post"> 
         <p class="mb-3 tx-14 ms-3">
          {{ post.id }} -- {{ post.publication }}
           
         </p>  
         <a class="aCursor" data-bs-toggle="modal" data-bs-target="#postModalImage"
-          data-bs-whatever="@mdo" @click="showModal(post)"
+          data-bs-whatever="@mdo" 
           v-if="post.imageUrl">
           <img class="rounded mx-auto d-block" :src="post.imageUrl" alt="Image de Post"/>
         </a>
-      </div>
+      </div>-->
 
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary"
@@ -99,12 +106,15 @@ export default {
     },
     _updatePost: function () {
       const publication = this.publication;
+        console.log(this.post +" ppp===***** "+publication);
       const image = this.image;
+      
       const dynamicId = this.post.id;
-      console.log("===***"+dynamicId);
+      console.log("id ===***** "+dynamicId);
       this.$store.dispatch("updatePost", { publication, image, dynamicId });
       this.$refs["resetInput"].value = "";
     },
+    //updatePost
   },
   computed: {
     //  getting the current user via the state by mapGetters

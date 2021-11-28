@@ -36,7 +36,7 @@
             Commentaire
           </label>
         </div>
-         <commentWrite/>  
+         <commentWrite :postId="post.id"></commentWrite>  
         <div class="commentaire_post" v-for="commentaire in post.commentaires" :key="commentaire.id">
           <h2> {{commentaire.User.last_name}} {{commentaire.User.first_name}}</h2>
           <p>{{ commentaire.comment }}</p>
@@ -65,8 +65,7 @@ export default {
    HelloWorld,
    postWrite,
    commentWrite,
-  },
-  
+  },  
    computed: {
        ...mapState ({
            users: 'userInfo',

@@ -53,20 +53,14 @@ exports.userProfil = (req, res, next) => {
 exports.updateUser = (req, res, next) => {
     //Write to Update a User informations
   const loggedUserId = req.params.id;
-  console.log("user : " + loggedUserId)
-
-  ? {
-    imagesURL: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`,
-    
-    }
-    : {
-      first_name: req.body.first_name,
-      last_name: req.body.last_name,
-      bio: req.body.bio,
-      email: req.body.email,
-      password: req.body.password,
-      isAdmin: req.body.isAdmin,
-    }
+  const email= req.body.email;
+  const first_name = req.body.first_name;
+  const last_name = req.body.last_name;
+  const bio = req.body.bio;
+  const password = req.body.password;
+  const isAdmin = req.body.isAdmin
+  const imageUrl = req.body.imagesURL;
+  console.log("  ===user=== : " + loggedUserId)
     //ici declaration de regex
     const regexMail     = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     const regexPassword = /^(?=.*\d).{4,8}$/;
@@ -82,6 +76,11 @@ exports.updateUser = (req, res, next) => {
       })
         .then(async (loggedUser) => {
           if (loggedUser) {
+            if (imageUrl) {
+              loggedUser.imagesURL = req.file
+                ? `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
+                : null;
+            }
             if (first_name) {
               loggedUser.first_name = first_name;
             }
@@ -97,11 +96,8 @@ exports.updateUser = (req, res, next) => {
             if (password) {
               loggedUser.password = await bcryptjs.hash(password, 10);
             }
-            loggedUser.isAdmin = isAdmin; 
-            console.log("Image", loggedUser.imagesURL);
-            if (loggedUser.imagesURL != null) {
-              const fileName = loggedUser.imagesURL.split("/images/")[1];
-              fs.unlink(`images/${fileName}`, () => {
+            loggedUser.isAdmin = isAdmin;
+            console.log("Image ======= ", loggedUser.imagesURL);
                 User.update(loggedUser.dataValues, {
                   where: {
                     id: loggedUserId,
@@ -123,9 +119,7 @@ exports.updateUser = (req, res, next) => {
                     return res.status(400).json({
                       error: "Impossible a mettre a jour" +error,
                     });
-                  }); 
-              });
-            }
+                  });                         
           }
         })
         .catch((error) => {
@@ -160,7 +154,7 @@ exports.deleteProfile = (req, res, next) => {
             })
               .then((comment) => {
                 console.log(user + "   : " +user.isAdmin);
-                if (user && user.isAdmin) {
+                if (user) {
                   User.destroy({
                     where: {
                       id: deletedUser,
@@ -178,19 +172,17 @@ exports.deleteProfile = (req, res, next) => {
                               console.log("File deleted!!!!!!!!!!!!!!");
                             }
                           });
-                        } else {
-                          if (!destroyed) {
-                            throw error;
-                          } else {
-                            // Si il n'y a pas d'erreur alors, l'erreur unlink est réussi
-                            console.log("File deleted!");
-                          }
                         }
+                     if (posts.publication) {
+                          posts.destroy({
+                         where: { id: posts.id }, 
+                       })
+                     }
                       }
                       for (const comments of comment) {
                         if (comments.comment) {
                           comments.destroy({
-                            where: { id: comment.id }, 
+                            where: { id: comments.id }, 
                           })
                         }
                       }
@@ -208,14 +200,14 @@ exports.deleteProfile = (req, res, next) => {
                 } else {
                   res
                     .status(403)
-                    .json({ error: "Vous n'avez pas d'autorisation" });
+                    .json({ error: "Vous n'avez pas d'autorisation "+error });
                 }
               })
               .catch((error) => {
                 console.error(error.message);
                 return res
                   .status(404)
-                  .json({ error: "Commentaires introuvable" });
+                  .json({ error: "Commentaires introuvable" + error });
               });
           })
           .catch((error) => {
