@@ -1,37 +1,8 @@
 <template>
     <section class="nav">
-       <ul class="menu">
-              <li>
-                <router-link class="item" :to="{ name: 'Home' }">
-                  <table>
-                    <th>
-                      <td class="icon"><i class="fas fa-home"></i></td>
-                      <td class="nom_icon">Accueil</td>
-                    </th>
-                  </table>
-                  </router-link>
-              </li>
-              <!--<li>
-                <router-link class="item" :to="{ name: 'allUser' }">
-                  <table>
-                    <th>
-                      <td class="icon"><i class="fas fa-users"></i></td>
-                      <td class="nom_icon">Users</td>
-                    </th>
-                  </table>
-                  </router-link>
-              </li>-->
-              <li>
                 <router-link class="item" :to="{ name: 'updateProfil' }">
-                      <table>
-                    <th>
-                      <td class="icon"><i class="fas fa-user-edit"></i></td>
-                      <td class="nom_icon">Modifier le compte</td>
-                    </th>
-                  </table>
-                  </router-link>
-              </li>
-            </ul>
+                  <i class="fas fa-user-edit"></i>
+                </router-link>
     </section> 
 </template>
 <script>
@@ -67,27 +38,19 @@ export default{
 }
 </script>
 <style scoped>
-li{
-  list-style-type: none;
-}
 a{
   text-decoration: none;
 }
-ul{
-  padding: 30px;
-}
-table{
-  margin: 20px;
-}
-.icon .fas{
+.fas{ 
  border: 0px black solid;
  border-radius: 50%;
- padding: 20px;
- font-size: 20px;
+ padding: 15px;
+ font-size: 16px;
  background: #F5B7B1;
  color:white;
+ opacity: 0;
 }
-.nom_icon{
-  color:black;
+.fas:hover{
+  opacity: 1;
 }
 </style>

@@ -7,7 +7,7 @@
         <main v-for="(user, index) in users" :key="index">
          <div class="users">
            <i class="fas fa-user-tie"></i>
-           <p> {{index}} {{user.first_name}}</p>           
+           <p @click="getMyProfil(user)"> {{user.last_name}} {{user.first_name}}</p>           
           </div> 
         </main> 
     </div>  
@@ -20,31 +20,33 @@
 import { mapState } from 'vuex'
 import HelloWorld from '../components/HelloWorld.vue'
 export default {
-  name: "MyProfil",
+  name: "allUser",
   components: { 
    HelloWorld,
   },  
-    mounted: function() {
-     //const userIdDynamic = this.$store.state.user.userId;
-     console.log("debut get all profile ");
-        if (this.$store.state.user.userId == -1){
-        this.$router.push('/');
-        return;     
-        }
-        console.log("===================Debut==============");
-        this.$store.dispatch('getAllUser');
-        this.$router.push('/allUser');
-   },
+  methods:{
+     getMyProfil: function (user) {
+       const dynamicId = user.id;
+
+       console.log("----------------l'utulisateur est :---- "+ dynamicId);
+        this.$router.push({ name: "MyProfil" });
+        this.$store.dispatch("getUserById", { dynamicId });
+        this.$store.dispatch("getAllMyPost", {dynamicId});
+    },
+  },
    computed: {
        ...mapState ({
          users: 'userInfo',
+         
+         posts: "posts",
+         post: "post"
        })
    }
 }
 </script>
 <style scoped>
  .allUser{
-  border: 1px black solid;
+  border: 0px rgb(0, 0, 0, 0.2) solid;
   padding: 30px;
   margin: 20px;
  }
@@ -57,9 +59,11 @@ export default {
   border-radius: 20px;
   width: 200px;
   margin: 20px;
+  cursor: grab;
  }
  p{
    padding: 40px; 
+   text-transform: capitalize;
  }
  .fas{
   border: 0px black solid;
@@ -69,5 +73,18 @@ export default {
   margin-top: 15px;
   background: #FADBD8;
   color: white;
+ }
+ @media (max-width: 768px){
+  h1{
+   font-size: 16px;
+   font-weight: bolder;
+   }
+ .flex{
+  display: flex;
+  flex-direction: column;
+ }
+ .users{
+  margin: 10px auto;
+ }
  }
 </style>

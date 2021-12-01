@@ -1,25 +1,27 @@
 <template>
-    <body class="d-flex flex-column">
-      <section class="input-group input-group-sm mb-1 mt-3 d-flex flex-row justify-content-start border-bottom border-light border-2">
-        <img class="rounded-circle img-xs" src="../assets/icon.png" alt="" style="height: 150px;"/>
-        <div class="col-sm-6 col-md-9">
-        <input class="form-control mr-sm-2 bg-light" v-model="comment"
-          :maxlength="max" type="text" placeholder="Commenter..." aria-label="Commenter" id="commentText"/>
-        </div>
-      <!-- add button here </AddImageButton>-->
+  <body class="comment-write d-flex flex-column">
+    <div class="d-flex ">
+      <div class="col-sm-6 col-md-9">
+         <textarea class="form-control mr-sm-2 bg-light" v-model="comment"
+          type="text" placeholder="Commenter..." aria-label="Commenter" id="commentText">
+         </textarea>
+      </div>
+      <div>
        <label class="addImage">
-         <span class="title-image">Ajouter image</span>
+         <span class="title-image">Image</span>
          <input accept="image/*" type="file" id="FileInput" ref="image" name="image_attachment_upload"
           v-on:change="handleFileUpload()"/>
        </label>
-      <!-- add button end here -->
-      <div>
-        <button class="btn btn-primary btn-icon-text btn-edit-profile" @click="create_comment"
-          :disabled="!comment && !image">
-              Publier
-        </button>
       </div>
-      </section>
+    </div>
+        <div>
+          <button class="btn btn-primary btn-icon-text btn-edit-profile" @click="create_comment"
+            :disabled="!comment && !image">
+              Publier
+          </button>
+        </div>
+      
+
       <div class="p-2 mb-3">
         <section v-if="preview">
           <img :src="preview" class="img-fluid" />
@@ -69,7 +71,6 @@ export default {
       const image = this.image;
       const userId = this.UserId;
       const postId = this.postId;
-      console.log(this.image+"***************url :"+image );
       this.$store.dispatch("createComment", { comment, image, userId, postId });
       this.image = null;
       this.preview = null;
@@ -77,22 +78,67 @@ export default {
     },
   },
    computed: {
-   
     ...mapState(["user"]),
   },
 }
 </script>
 <style scoped>
-#FileInput{
-  opacity: 0;
+.comment-write{
+  background: rgb(253, 230, 230);
+  border-top: 2px rgb(248, 159, 159) solid;
+  border-bottom: 2px rgb(248, 159, 159) solid;
+  height: auto;
+}
+.addImage {
+  position: relative;
+  right: 75px;
+  margin-top: 38px;
 }
 .addImage span{
- border: 2px #85C1E9 solid;
- background: #f8b0a7;
- border-radius: 20px;
- position: relative;
- left: 160px;
- bottom: 100px;
- padding: 10px;
+  cursor: grab;
+  padding: 19px 16px;
+  color:white;
+  border-top-right-radius: 28px;
+  border-bottom-right-radius: 25px;
+  background: rgb(253, 200, 200); 
+}
+.addImage input{
+  position: absolute;
+  top: 0; left: 0;  
+  opacity: 0;
+}
+textarea{
+  height: 60px;
+  border-radius: 30px;
+  margin: 20px;
+  margin-left: 100px;
+  padding: 10px;
+  width: 80%;
+}
+.btn-edit-profile{
+  width: 80px;
+  height: 50px;
+}
+@media(max-width: 768px) {
+.addImage {
+  position: relative;
+  right: 71px;
+  bottom: 20px;
+}
+.addImage span{
+  padding: 9px;
+}
+textarea{
+  height: 40px;
+  margin: 10px;
+  padding: 10px;
+  width: 230px;
+}
+.btn-edit-profile{
+  width: 70px;
+  height: 30px;
+  padding-bottom: 30px;
+  margin-right: 120px;
+}
 }
 </style>

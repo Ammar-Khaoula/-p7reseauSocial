@@ -51,6 +51,7 @@ export default createStore({
       last_name: '',
       email: '',
       bio: '',
+      imagesURL: '',
     },
     post: {
       id: '',
@@ -203,7 +204,7 @@ deleteComment(state, commentaire) {
       });
     }) ;  
     },
-  
+  //---------------get all users------------
     getAllUser: ({ commit }) => {
       commit;
       console.log("heloooooooooo tous les utilisateut");
@@ -212,12 +213,13 @@ deleteComment(state, commentaire) {
         .then(function (response) {
           commit('userInfo', response.data.users);
           console.log('all usres ====' + response.data.users.length);
+          window.location.reload();
           })
           .catch(function (error) {
             console.log('Erreur ----------------'+error);
       })
     },
-      
+  //----------- get user by id------------------
     getUserById: ({ commit }, post) => {
       commit;
       let id = null;
@@ -240,6 +242,7 @@ deleteComment(state, commentaire) {
       .then((response) => {
         commit('userInfo', response.data);
         console.log("name : "+response.data.first_name)
+       // window.location.reload();
       })
       .catch((error) => {
         console.log("ereur : "+error);
@@ -252,6 +255,7 @@ deleteComment(state, commentaire) {
       instance.get(getPost)
         .then((response) => {
           commit("post", response.data.posts);
+          //window.location.reload();
         })
         .catch((error) => {
           console.log('ereur ereur ereur: '+error);
@@ -263,13 +267,14 @@ deleteComment(state, commentaire) {
         .then((response) => {
           commit("post", response.data.posts);
           commit('ADD_USERSLIKED_TO_POST');
+         // window.location.reload();
         })
         .catch((error) => {
           console.log('ereur ereur ereur: '+error);
     });
   },
-      // ########"""get My du post############
-      getAllMyPost({ commit }, post) {
+// ########"""get My du post############
+  getAllMyPost({ commit }, post) {
         let id = null;
         if (post == null)
         {
@@ -296,6 +301,7 @@ deleteComment(state, commentaire) {
               commit("post", response.data.myPosts);
               console.log("length : " + response.data.myPosts.length);
               resolve(response);
+             //window.location.reload();
             })
             .catch((error) => {
               console.log(error);
@@ -323,7 +329,7 @@ deleteComment(state, commentaire) {
           .then((response) => {
             commit("ADD_NEW_POST", response.data.post);
             resolve(response);
-            //window.location.reload();
+            window.location.reload();
           })
           .catch((error) => {
             console.log("Erreur : "+error);
@@ -331,7 +337,7 @@ deleteComment(state, commentaire) {
           });
       });
     },
-    
+    //----------suprimer un post---------
     deletePost({ commit }, post) {
       console.log("supprimer le  post : "+post.dynamicId+" de l'utilisateur " + userId);
       if (!userId)
@@ -353,7 +359,7 @@ deleteComment(state, commentaire) {
             .then((response) => {
               commit("_deletePost", response.data.post);
               resolve(response);
-             // window.location.reload();
+              window.location.reload();
             })
             .catch((error) => {
               console.log("Error : "+error);
@@ -362,6 +368,7 @@ deleteComment(state, commentaire) {
         });
       }
     },
+    //-----------modifier un post---------
     updatePost({ commit }, post) {
       console.log("modifier post avec l'utilisateur " + post.dynamicId);
       let formData = new FormData();
@@ -371,6 +378,7 @@ deleteComment(state, commentaire) {
       formData.append("userId", post.dynamicId);
       console.log("********modifier post********")
       const createUpdatePost = `/postes/${post.dynamicId}`;
+      console.log('UpdatePost'+createUpdatePost)
         instance
           .put(createUpdatePost, formData)
           .then((response) => {
@@ -378,9 +386,10 @@ deleteComment(state, commentaire) {
             //window.location.reload();
           })
           .catch((error) => {
-            console.log(error);
+            console.log('ereuur'+error);
           });
     },
+  // ------------- creer un commentaire-----
     createComment({ commit }, commentaire) {
       console.log("crée de commentaire sur le post "+commentaire.postId+" l'utilisateur " + userId);
       if (!userId)
@@ -393,7 +402,6 @@ deleteComment(state, commentaire) {
       formData.append("image", commentaire.image);
       formData.append("userId", userId);
       formData.append("postId", commentaire.postId);
-      console.log("formData", formData.image);
       const createComment = `/comment/${commentaire.postId}`;
       return new Promise((resolve, reject) => {
         instance
@@ -402,7 +410,7 @@ deleteComment(state, commentaire) {
             console.log("Hey::", response.data.comment);
             commit("addComment", response.data.comment);
             resolve(response);
-           // window.location.reload();
+           //window.location.reload();
           })
           .catch((error) => {
             console.log(error);
@@ -416,6 +424,7 @@ deleteComment(state, commentaire) {
         .then((response) => {
           console.log("GetAllComment: " + response.data.comment);
           commit("commentaire", response.data.comment);
+         // window.location.reload();
         })
         .catch((error) => {
           console.log('ereur ereur ereur: ' + error);
@@ -448,7 +457,7 @@ deleteComment(state, commentaire) {
           });
       });
     },*/
-    //************************delete commentaire************ */
+    //************************suprimer commentaire************ */
     deleteComment({ commit }, commentaire) {
       console.log("supprimer le  commentaire : "+commentaire.dynamicId+" et l'utilisateur " + userId);
       if (!userId)
@@ -471,7 +480,7 @@ deleteComment(state, commentaire) {
               commit("deleteComment", response.data.comment);
               console.log("----------l'utilisateur a ete suprimer-----------");
               resolve(response);
-              //window.location.reload();
+              window.location.reload();
             })
             .catch((error) => {
                // how read code error 
@@ -484,6 +493,7 @@ deleteComment(state, commentaire) {
       }
       
     },
+    //-----------modifier mon compte----------
     updateUser({ commit }, user) {
       if (!userId)
       {
@@ -498,6 +508,7 @@ deleteComment(state, commentaire) {
             first_name: user.thisFirst_name,
             last_name: user.thisLast_name,
             bio: user.thisBio,
+            image: user.thisImagesURL,
             email: user.thisEmail,
             password: user.thisPassword,
             isAdmin: user.thisIsAdmin
@@ -505,6 +516,7 @@ deleteComment(state, commentaire) {
           .then((response) => {
             commit("userInfo", response.data.user);
             resolve(response);
+            window.location.reload();
           })
           .catch((error) => {
             console.log(error);
@@ -512,6 +524,7 @@ deleteComment(state, commentaire) {
           });
       });
     },
+    //---------suprimer un post--------
     deleteUser({ commit }, user) {
       console.log("user id a supprimer : " + userId);
       if (!userId)
@@ -536,6 +549,7 @@ deleteComment(state, commentaire) {
                 commit("userInfo", response.data.user);
               }
               resolve(response);
+              window.location.reload();
             })
             .catch((error) => {
               console.log("=============: "+error);

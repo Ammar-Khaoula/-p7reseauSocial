@@ -1,5 +1,5 @@
 <template>
-  <div class="card-header" style="width:768px; margin-left:10%;">
+  <div class="card-header">
     <div class="body">
         <div class="d-flex align-items-center justify-content-between">
           <img class="rounded-circle profile-pic" src="../assets/icon.png"  alt="profile image"/>
@@ -8,11 +8,10 @@
         </div> 
 
     </div>
-   <section class="card-body">
+    <section class="card-body">
               <!--=========== a supprimer  -->
           <p>{{user.userId}} -- {{post.UserId}} -- {{user.isAdmin}}</p>
-     <main
-          class="btn-group"
+      <main class="btn-group"
           v-if="(user.userId == post.UserId) || user.isAdmin">
           <button
             class="btn btn-Info dropdown-toggle me-5"
@@ -33,7 +32,10 @@
             </li>
           </ul>
     </main>
-    <div class="pub_post" v-if="post">
+    <div class="form-group pub_post" v-if="post">
+    <select class="form-control" id="exampleFormControlSelect1">
+      <option>{{ post.publication }}</option>
+    </select>
       <!--<span>Message is: {{ likes }}</span>
      <br> 
      <input type="text" v-model="likes" placeholder="edit me">-->
@@ -44,27 +46,23 @@
         <a class="aCursor" data-bs-toggle="modal" data-bs-target="#postModalImage"
           data-bs-whatever="@mdo" @click="showModal(post)"
           v-if="post.imageUrl">
-          <img class="rounded mx-auto d-block" :src="post.imageUrl" alt="Image de Post"/>
+          <img class="rounded mx-auto d-block" :src="post.imageUrl" alt="Image de Post" style="height:200px; width:auto;"/>
         </a>
-        <p>
-        <i class="fas fa-heart" v-on:click="likePost()">
-          <span>{{post.likes}}</span>
-          </i> 
-        </p>
       </div>
+      <div class="d-flex post-actions">
+        <label class=" d-flex align-items-center text-muted me-4 text-decoration-none" for="commentText">
+          <i class="mb-1 me-2 far fa-comment-alt"></i>
+            <p>Commentaire </p>
+           <p> {{post.commentaires.length}}</p>
+        </label>
+      </div>
+        <commentWrite :postId="post.id"></commentWrite>
     <div class="card-footer">
-        <div class="d-flex post-actions">
-          <label class=" d-flex align-items-center text-muted me-4 text-decoration-none" for="commentText">
-            <i class="mb-1 me-2 far fa-comment-alt"></i>
-            Commentaire {{post.commentaires.length}}
-          </label>
-        </div>
-         <commentWrite :postId="post.id"></commentWrite>
-        <div>     
-        <comment v-for="commentaire in post.commentaires" :key="commentaire.id" :commentaire="commentaire" />
+      <div>     
+       <comment v-for="commentaire in post.commentaires" :key="commentaire.id" :commentaire="commentaire" />
       </div>
-      <updateComment/>
-      </div>
+        <updateComment/>
+    </div>
    </section>
   </div>
 </template>
@@ -80,7 +78,6 @@ export default {
    props:{
      post: Object,
      commentaire: Object,
-  
    }, 
    components: {
     commentWrite,
@@ -99,7 +96,6 @@ export default {
        image: "",
        max: 280,
        preview: "",
-       likes: 0,
      }
    },
    methods:{   
@@ -139,15 +135,7 @@ export default {
       this.formattedTime = this.getFormattedTime(this.post.updatedAt);
     },
   },
-  /*created() {
-    this.formattedTime = moment();
-    this.formattedTime = this.getFormattedTime(this.post.updatedAt);
-    setInterval(() => {
-      this.now = moment();
-    }, 3000);
-  },*/
    computed: {
-    //  getting the current user via the state by mapGetters
     ...mapState(["user", "posts"]),
   },
 }
@@ -155,11 +143,18 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.card-header{
+  margin: auto;
+  width: 80%;
+  padding: 10px;
+  background:white;
+}
 .body{
-  background: #f8b4ac;
-  border-top: 0.5rem #5DADE2 solid;
+  background: #fad3ce;
+  border-top: 0.5rem #c0e5fc solid;
   border-top-right-radius: 60px;
-  padding: 20px;
+  padding: 5px 20px;
+  height: 100px;
 }
 .btn{
   position: relative;
@@ -169,9 +164,8 @@ export default {
   border:3px #f8b4ac solid;
 }
 .pub_post{
-  background: #FDEDEC;
-  padding: 10px;
-  padding-bottom: 30px;
+  padding: 20px;
+
 }
 .card-footer{
   background: #EBF5FB;
@@ -180,9 +174,18 @@ a{
   text-decoration: none;
 }
 .d-flex img{
-  height: 150px;
+  height: 80px;
 }
-h3{
-  font-size: 16px;
+.post-actions{
+  border-top:1px rgb(219, 217, 217, 0.7) solid;
+  padding-top: 20px;
+}
+.text-muted i{
+  font-size:  20px;
+}
+.text-muted p{
+  color: black;
+  font-weight: bolder;
+  font-size: 14px;
 }
 </style>

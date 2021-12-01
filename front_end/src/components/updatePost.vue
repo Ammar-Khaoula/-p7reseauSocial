@@ -81,6 +81,7 @@ export default {
   name: "updatePost",
   data() {
     return {
+      id: "",
       publication: "",
       image: "",
       max: 280,
@@ -106,9 +107,8 @@ export default {
     },
     _updatePost: function () {
       const publication = this.publication;
-        console.log(this.post +" ppp===***** "+publication);
+      console.log(this.post +" ppp===***** "+publication);
       const image = this.image;
-      
       const dynamicId = this.post.id;
       console.log("id ===***** "+dynamicId);
       this.$store.dispatch("updatePost", { publication, image, dynamicId });

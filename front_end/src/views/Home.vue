@@ -1,27 +1,15 @@
 <template>
-  <body class="acceuil">
-    <div class="container">
-    <div class="profile-page tx-13">
-      <HelloWorld id="helloWorld"></HelloWorld>
-    <div class="row profile-body d-flex flex-row justify-content-center">     
+    <body class="container">
+    <section class="profile-page tx-13">
+      <HelloWorld id="helloWorld"></HelloWorld>  
     <div class="col-xl-6 middle-wrapper">
-       <postWrite id="postwrite"></postWrite>
-    <div class="row mt-4 mt-md-4 mt-lg-0">
+      <postWrite id="postwrite"></postWrite>
     <div class="col-md-12">
-    <div class="card rounded">
-      <div>
-        <Post v-for="post in posts" :key="post.id" :post="post" />
-      </div>
-    
-    </div>
+      <Post v-for="post in posts" :key="post.id" :post="post" />
+    </div>  
     <updatePost/>
     </div>
-    </div> 
-    
-    </div>
-    </div>
-    </div>
-    </div>
+    </section>
   </body>
 </template>
 

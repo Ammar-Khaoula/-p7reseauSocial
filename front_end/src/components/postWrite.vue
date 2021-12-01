@@ -1,29 +1,29 @@
 <template>
-  <div class="card rounded mb-5">
-   <section class="card-header">
-    <div class="d-flex flex-column">
+  <div class="card rounded mb-5 d-flex flex-column">
+    <div class="post-Write">
       <!--#############addImage################-->
-       <label class="addImage">         
-          <span  class="title-image">Ajouter une image </span>
+      <label class="addImage">         
+          <span  class="title-image">image </span>
           <input type="file" id="FileInput"
          ref="image" name="image_attachment_upload"
          v-on:change="handleFileUpload()"/>
-        </label>
-        <!--<div class="input-group input-group-sm mb-3 mt-3 d-flex flex-row justify-content-start">-->
-      <main class="col-sm-5 col-md-8 from_input">
-        <textarea class="form-control mr-sm-2 bg-light" v-model="publication" type="text" placeholder="Publier ici..." aria-label="publication" id="publication">
+      </label>
+    </div>
+    <div class="input-group">
+      <main class="col-sm-5 col-md-6">
+        <textarea class="form-control" v-model="publication" type="text" placeholder="Publier ici..." aria-label="publication" id="publication">
         </textarea>
       </main>
     </div> 
-        <div>
-          <button class="btn btn-primary btn-icon-text btn-edit-profile"
-            @click="createPost" :disabled="!publication && !image">
-              Publier
-          </button>
-        </div>
+    <div>
+      <button class="btn btn-primary btn-icon-text btn-edit-profile"
+        @click="createPost" :disabled="!publication && !image">
+         Publier
+      </button>
+    </div>
 
         <div class="p-2 mb-3">
-          <template v-if="preview">
+          <section v-if="preview">
             <img :src="preview" class="img-fluid" />
             <div class="d-flex">
               <p class="mb-0 mt-2">file name: {{ image.name }}</p>
@@ -31,9 +31,8 @@
                 @click="resetImage" size="2x" for="imageFile">
               </button>
             </div>
-          </template>
-        </div>  
-    </section>   
+          </section>
+        </div>      
   </div>
 </template>
 
@@ -90,31 +89,70 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.card-header{
+.card{
   background: #FDEDEC;
-  width: 80%;
-  margin-left: 10%;
+  margin: auto;
+  width: 70%;
+  padding: 10px;
+  height: auto;
 }
 .btn{
-
   width: 120px;
 }
-.addImage span{
-  position: relative;
-  top: 30px;
-  border: 3px #E74C3C solid;
-  border-radius: 20px;
-  padding: 30px 10px;
-  background: #F5B7B1;
+.addImage {
+  margin: auto;
+  padding: 10px;
+  margin-right: 150px;
+  
 }
-#FileInput{
+.addImage span{
+  cursor: grab;
+  padding: 19px 16px;
+  color:white;
+  border-radius: 10px;
+  background: rgb(253, 200, 200); 
+}
+.addImage input{
+  position: absolute;
+  top: 0; left: 0;  
   opacity: 0;
 }
-input{
-  position: relative;
-  bottom: 50px;
-  margin-left: 10%;
-  height: 120px;
+textarea{
+  height: 80px;
+  margin-left: 30%; 
+  margin-top: 10px;
 }
-
+@media (max-width: 768px){
+.card{
+  width: 95%;
+  height: auto;
+}
+.btn{
+  width: 80px;
+}
+.addImage {
+  margin: auto;
+  padding: 10px;
+  margin-right: 50px;
+}
+.addImage span{
+  cursor: grab;
+  padding: 15px 10px;
+  color:white;
+  border-radius: 10px;
+  background: rgb(253, 200, 200); 
+}
+.addImage input{
+  position: absolute;
+  top: 0; left: 0;  
+  opacity: 0;
+}
+textarea{
+  height: 60px;
+  margin: 10px;
+}
+.btn{
+  width: 80px;
+}
+}
 </style>

@@ -48,6 +48,7 @@ export default{
               first_name: "",
               last_name: "",
               bio: "",
+              imagesURL: "",
               email: "",
               password: "",
           }
@@ -96,6 +97,7 @@ export default{
                 last_name: this.last_name,
                 first_name: this.first_name,
                 password: this.password,
+                imagesURL: this.imagesURL,
                 isAdmin: this.isAdmin,
               }).then (function(){
                   self.login();
@@ -103,11 +105,8 @@ export default{
                   console.log(error);
               })
           }
-      }
-         
+      }    
     }
-
-
 </script>
 
 <style scoped>

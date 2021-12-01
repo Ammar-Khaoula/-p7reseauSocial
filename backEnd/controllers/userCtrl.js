@@ -34,6 +34,7 @@ exports.userProfil = (req, res, next) => {
       id: userId,
     },
     attributes: [
+      "id",
       "first_name",
       "last_name",
       "bio",
