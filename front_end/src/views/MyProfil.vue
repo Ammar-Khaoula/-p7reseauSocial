@@ -44,7 +44,7 @@
               </button>
             </li>
             <li>
-              <button class="dropdown-item" @click="deletePost">
+              <button class="dropdown-item" @click="deletePost(post)">
                 Supprimer post
               </button>
             </li>
@@ -70,25 +70,22 @@
         </label>
       </div>
         <commentWrite :postId="post.id"></commentWrite>  
-
-     
-      <div class="commentaire_post" v-for="commentaire in post.commentaires" :key="commentaire.id" :commentaire="commentaire">
-        <div>
+    <div class="commentaire_post" v-for="commentaire in post.commentaires" :key="commentaire.id" :commentaire="commentaire">
+      <div>
           <h2> {{commentaire.User.last_name}} {{commentaire.User.first_name}}</h2>
           <p>{{ commentaire.comment }}</p>
           <a class="aCursor" data-bs-toggle="modal" data-bs-target="#postModalImage"
            data-bs-whatever="@mdo" @click="showModal(commentaire)"
            v-if="commentaire.imageUrl">
            <img class="rounded mx-auto d-block" :src="commentaire.imageUrl" alt="Image de Post" style="height:200px; width:200px;"/>
-          </a>
-          
-      </div> 
-      <div v-if="(user.userId == commentaire.UserId || user.isAdmin)">
+          </a> 
+        </div> 
+      <div class="icon" v-if="(user.userId == commentaire.UserId || user.isAdmin)">
         <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#commentModal" data-bs-whatever="@mdo"
                 @click="showModal(commentaire)">
           <i class="fas fa-edit"></i>
         </button>
-        <button class="dropdown-item" @click="_deleteComment">
+        <button class="dropdown-item" @click="_deleteComment(commentaire)">
           <i class="fas fa-trash-alt"></i>
         </button>
       </div>
@@ -106,10 +103,11 @@ import commentWrite from '../components/commentWrite.vue'
 
 export default {
   name: "MyProfil",
-  props: ['id'],
   data(){
      return{
-       preview:'',   
+       preview:'',  
+       post:'', 
+       commentaire:'',
      }
    },
   components: {
@@ -140,15 +138,16 @@ export default {
      // this.$router.push({ name: "updatePost"  }); 
       this.$store.dispatch("updatePost", { dynamicId });
     },
-    deletePost: function () {
-      const dynamicId = this.post.id;
+    deletePost: function (post) {
+      const dynamicId = post.id;
+      console.log("sssssssss: "+dynamicId)
       this.$store.dispatch("deletePost", { dynamicId });
     },
     showModal(commentaire) {
       this.$store.dispatch("getAllcommentaire", commentaire);
     },
-    _deleteComment: function () {
-      const dynamicId = this.commentaire.id;
+    _deleteComment: function (commentaire) {
+      const dynamicId = commentaire.id;
       console.log('userrrr:'+dynamicId);
       this.$store.dispatch("deleteComment", { dynamicId });
     }, 
@@ -223,12 +222,27 @@ export default {
     border-radius: 25px;
     padding: 10px;
     margin-top: 10px;
-    width: 70%;
+    width: 80%;
 }
 .commentaire_post h2{
     text-align: left;
     font-size: 14px;
     font-weight: bolder;
+}
+.icon{
+  background: hotpink;
+  
+}
+.dropdown-item i {
+  font-size: 16px;
+}
+.fa-edit{
+  color: green;
+  position: relative;
+  left: 250px;
+}
+.fa-trash-alt{
+  color: red;
 }
 @media (max-width: 768px){
   h1{

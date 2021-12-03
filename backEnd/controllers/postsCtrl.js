@@ -77,7 +77,7 @@ exports.getAllPostbyUser = (req, res, next) => {
       },
       {
         model: Comment,
-        attributes: ["comment", "createdAt", "UserId", "imageUrl"],
+        attributes: ["id", "comment", "createdAt", "UserId", "imageUrl"],
         include: [
           {
             model: User,
@@ -86,7 +86,7 @@ exports.getAllPostbyUser = (req, res, next) => {
         ],
       },
     ],
-    order: [["id", "DESC"]],
+    order: [["createdAt", "DESC"]],
   })
       .then((myPosts) => {
         console.log("*****************length :    " + myPosts.length);

@@ -87,16 +87,12 @@ h2{
   font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
 .input-group{
-  border: 1.5px #badef7  solid;
+  border: 1px #fae4e2 solid;
+  background: rgb(249, 235, 234);
   border-radius: 25px;
-  width: 500px;
   padding: 10px;
-  background: #f8f5f4;
-}
-.rounded img{
-  width: 150px;
-  height: 80px;
-  padding-left: 30px;
+  margin-top: 10px;
+  width: 80%;
 }
 .contenue{
   justify-content: space-between;
@@ -106,18 +102,45 @@ h2{
 }
 .btn-group{
   position: absolute;
-  left: 530px;
-}
-.dropdown-item{
-  position: relative;
-  padding: 15px;
-  margin: 5px;
-  border: 0px black solid;
-  border-radius: 75%;
-  background: #fad3ce;
+  left: 400px;
 }
 .dropdown-item i {
-  color: white;
-  font-size: 20px;
+  font-size: 16px;
+}
+.fa-edit{
+  color: green;
+}
+.fa-trash-alt{
+  color: red;
+}
+@media (max-width: 768px){
+  h2{
+  font-size: 14px;
+  font-weight: bolder;
+}
+.input-group{
+  padding: 5px;
+  margin-top: 10px;
+  width: 230px;
+}
+.contenue{
+  justify-content: space-between;
+}
+.me-perso h2{
+  float: left;
+}
+.btn-group{
+  position: absolute;
+  left: 400px;
+}
+.dropdown-item i {
+  font-size: 14px;
+}
+.fa-edit{
+  color: green;
+}
+.fa-trash-alt{
+  color: red;
+}
 }
 </style>

@@ -14,7 +14,6 @@
             <div class="input-group input-group-sm mb-3 mt-3 d-flex flex-row justify-content-start">
               <!-- image -->
               <img class="rounded-circle img-xs" src="../assets/icon.png" alt="" style="width:200px; height:200px;"/>
-              
               <div class="col-sm-5 col-md-8 ms-3">
                 <input class="form-control mr-sm-2 bg-light"
                       v-model="publication"
@@ -65,7 +64,7 @@
           </button>
         <div>
             <button class="btn btn-primary btn-icon-text btn-edit-profile"
-              @click="_updatePost" :disabled="!publication && !image"
+              @click="_updatePost()" :disabled="!publication && !image"
               data-bs-dismiss="modal">
               Republier
             </button>
@@ -86,6 +85,7 @@ export default {
       image: "",
       max: 280,
       preview: "",
+      post:"",
     };
   },
   methods: {
@@ -114,7 +114,7 @@ export default {
       this.$store.dispatch("updatePost", { publication, image, dynamicId });
       this.$refs["resetInput"].value = "";
     },
-    //updatePost
+    
   },
   computed: {
     //  getting the current user via the state by mapGetters

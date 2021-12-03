@@ -2,12 +2,11 @@
     <body class="container">
     <section class="profile-page tx-13">
       <HelloWorld id="helloWorld"></HelloWorld>  
-    <div class="col-xl-6 middle-wrapper">
-      <postWrite id="postwrite"></postWrite>
-    <div class="col-md-12">
+      <postWrite></postWrite>
+    <div class="pubPost">
       <Post v-for="post in posts" :key="post.id" :post="post" />
-    </div>  
-    <updatePost/>
+     
+    <updatePost></updatePost>
     </div>
     </section>
   </body>

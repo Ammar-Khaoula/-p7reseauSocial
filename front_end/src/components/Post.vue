@@ -1,18 +1,16 @@
 <template>
   <div class="card-header">
-    <div class="body">
-        <div class="d-flex align-items-center justify-content-between">
+        <div class="d-flex">
           <img class="rounded-circle profile-pic" src="../assets/icon.png"  alt="profile image"/>
-          <h2 @click="getMyProfil"> {{post.User.last_name}}  {{post.User.first_name}} </h2>
-          <p> {{ new Date(post.createdAt).toLocaleString() }}</p>
+          <h2 @click="getMyProfil"> {{post.User.last_name}}  {{post.User.first_name}} <br>
+            <span> {{ new Date(post.createdAt).toLocaleString() }}</span>
+          </h2>  
         </div> 
-
-    </div>
     <section class="card-body">
               <!--=========== a supprimer  -->
           <p>{{user.userId}} -- {{post.UserId}} -- {{user.isAdmin}}</p>
       <main class="btn-group"
-          v-if="(user.userId == post.UserId) || user.isAdmin">
+          v-if="showButton == (user.userId == post.UserId || user.isAdmin)">
           <button
             class="btn btn-Info dropdown-toggle me-5"
             type="button" id="defaultDropdown1" data-bs-toggle="dropdown"
@@ -20,8 +18,11 @@
           </button>
           <ul  class="dropdown-menu" aria-labelledby="defaultDropdown">
             <li>
-              <button class="dropdown-item"  type="button"                  
-                @click="_updatePost" >
+              <button class="dropdown-item"  type="button" data-bs-toggle="modal"
+                data-bs-target="#postModal"
+                data-bs-whatever="@mdo"
+                v-if="showButton == (user.userId == post.UserId)"
+                @click="showModal(post)">
                 Modifier post
               </button>
             </li>
@@ -33,9 +34,9 @@
           </ul>
     </main>
     <div class="form-group pub_post" v-if="post">
-    <select class="form-control" id="exampleFormControlSelect1">
-      <option>{{ post.publication }}</option>
-    </select>
+      <!--<select class="form-control" id="exampleFormControlSelect1">
+        <option>{{ post.publication }}</option>
+      </select>-->
       <!--<span>Message is: {{ likes }}</span>
      <br> 
      <input type="text" v-model="likes" placeholder="edit me">-->
@@ -46,18 +47,18 @@
         <a class="aCursor" data-bs-toggle="modal" data-bs-target="#postModalImage"
           data-bs-whatever="@mdo" @click="showModal(post)"
           v-if="post.imageUrl">
-          <img class="rounded mx-auto d-block" :src="post.imageUrl" alt="Image de Post" style="height:200px; width:auto;"/>
+          <img class="rounded mx-auto d-block" :src="post.imageUrl" alt="Image de Post" id="image-post"/>
         </a>
       </div>
       <div class="d-flex post-actions">
         <label class=" d-flex align-items-center text-muted me-4 text-decoration-none" for="commentText">
           <i class="mb-1 me-2 far fa-comment-alt"></i>
-            <p>Commentaire </p>
+            Commentaire 
            <p> {{post.commentaires.length}}</p>
         </label>
       </div>
+      <div class="card-footer">
         <commentWrite :postId="post.id"></commentWrite>
-    <div class="card-footer">
       <div>     
        <comment v-for="commentaire in post.commentaires" :key="commentaire.id" :commentaire="commentaire" />
       </div>
@@ -86,6 +87,7 @@ export default {
   },
    data(){
      return{
+       showButton: true,
        formattedTime: "",
        now: 0,
        createdAt: moment(),
@@ -108,11 +110,7 @@ export default {
       const dynamicId = this.post.id;
       this.$store.dispatch("deletePost", { dynamicId });
     },
-    _updatePost: function(){
-      const dynamicId = this.post.id;
-     // this.$router.push({ name: "updatePost"  }); 
-      this.$store.dispatch("updatePost", { dynamicId });
-    },
+
     _getPostById: function () {
      const dynamicId = this.post.id;
      console.log(" id ++++++++"+dynamicId);
@@ -120,7 +118,9 @@ export default {
       },
 
       showModal(post) {
-      this.$store.dispatch("post", post);
+       const dynamicId = post.id;
+        console.log(" id ++++++++"+dynamicId);
+        this.$store.dispatch("getPostById", { dynamicId });
     },
      getMyProfil: function () {
        const dynamicId = this.post.UserId;
@@ -144,48 +144,82 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .card-header{
-  margin: auto;
-  width: 80%;
-  padding: 10px;
-  background:white;
-}
-.body{
-  background: #fad3ce;
-  border-top: 0.5rem #c0e5fc solid;
-  border-top-right-radius: 60px;
-  padding: 5px 20px;
-  height: 100px;
+    background: rgb(249, 235, 234, 0.3);
+    border-top: 0.5rem #fad5d2 solid;
+    border-top-right-radius: 40px;
+    margin: auto;
+    margin-bottom: 30px;
+    width: 60%;
+    padding: 10px;
 }
 .btn{
   position: relative;
-  left: 356px;
-  top: 40px;
-  background: #85C1E9;
-  border:3px #f8b4ac solid;
+  left: 285px;
+  bottom: 55px;
+  background: #fcd3ad;
 }
 .pub_post{
   padding: 20px;
-
-}
-.card-footer{
-  background: #EBF5FB;
 }
 a{
   text-decoration: none;
 }
+.d-flex{
+ border-bottom: 1px #d3d2d2 solid;
+}
 .d-flex img{
-  height: 80px;
+  height: 50px;
+}
+#image-post{
+  height: 200px;
+  width: auto;
+}
+.d-flex span{
+  font-size: 12px;
+  color: rgb(124, 124, 124);
+}
+.d-flex h2{
+ text-transform: capitalize;
+ font-weight: bolder;
+ font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+ font-size: 20px;
 }
 .post-actions{
   border-top:1px rgb(219, 217, 217, 0.7) solid;
   padding-top: 20px;
 }
-.text-muted i{
-  font-size:  20px;
+.card-footer{
+  background: rgb(249, 235, 234, 0.3);
 }
-.text-muted p{
-  color: black;
-  font-weight: bolder;
-  font-size: 14px;
+@media (max-width: 768px){
+  .card-header{
+    width: 100%;
+}
+.btn{
+  position: relative;
+  left: 285px;
+  bottom: 55px;
+}
+.pub_post{
+  padding: 20px;
+}
+#image-post{
+  height: 200px;
+  width: 200px;
+}
+.d-flex img{
+  height: 50px;
+  padding-bottom: 15px;
+}
+.d-flex span{
+  font-size: 10px;
+}
+.d-flex h2{
+ font-size: 14px;
+}
+.post-actions{
+  border-top:1px rgb(219, 217, 217, 0.7) solid;
+  padding-top: 20px;
+}
 }
 </style>

@@ -370,7 +370,7 @@ deleteComment(state, commentaire) {
     },
     //-----------modifier un post---------
     updatePost({ commit }, post) {
-      console.log("modifier post avec l'utilisateur " + post.dynamicId);
+      console.log("modifier post avec l'utilisateur " + post.id);
       let formData = new FormData();
       formData.append("publication", post.publication);
       formData.append("imageUrl", post.image);
@@ -419,8 +419,9 @@ deleteComment(state, commentaire) {
       });
     },
     //############"" getAll commentaire############
-    getAllcommentaire({ commit }) {
-      instance.get('/comment/')
+    getAllcommentaire({ commit}) {
+      instance
+        .get('/comment/')
         .then((response) => {
           console.log("GetAllComment: " + response.data.comment);
           commit("commentaire", response.data.comment);
