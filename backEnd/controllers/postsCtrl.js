@@ -89,8 +89,6 @@ exports.getAllPostbyUser = (req, res, next) => {
     order: [["createdAt", "DESC"]],
   })
       .then((myPosts) => {
-        console.log("*****************length :    " + myPosts.length);
-
       if (myPosts) {
         return res.status(200).json({ message: "publication trouvé", myPosts });
       } else {
@@ -156,11 +154,9 @@ exports.createPost = (req, res, next) => {
       return res.status(500).json({ error });
     });
 };
-exports.updatePost = (req, res, next) => {
-  console.log("=============update=======");
- 
-    const postId = req.params.id; // l'id du post
-    const userId = req.body.userId; //l'id de user
+exports.updatePost = (req, res, next) => { 
+    const postId = req.params.id;
+    const userId = req.body.userId; 
     const postObject = req.file
       ? {
           // Si la personne rajoute un nouvel image
@@ -185,12 +181,8 @@ exports.updatePost = (req, res, next) => {
             UserId: user.id,
           },
         }).then((postFind) => {
-          console.log(postFind);
-          console.log(postFind+"======================Comment", postFind.publication);
-          console.log("Image", postFind.imageUrl);
           if (postFind.imageUrl != null) {
             const fileName = postFind.imageUrl.split("/images/")[1];
-            console.log("fileName", fileName);
             fs.unlink(`images/${fileName}`, () => {
               if (user && (user.isAdmin || user.id == postFind.UserId)) {
                 if (postFind) {
@@ -200,19 +192,17 @@ exports.updatePost = (req, res, next) => {
                     // plain: true,
                   })
                     .then((updated) => {
-                      console.log("ici updateeeeeeeeee::::::::::", updated);
+                      console.log("ici updatee", updated);
                       Post.findOne({
                         where: {
                           id: postId,
                         },
                       })
                         .then((updatedFound) => {
-                          console.log("updateeeeeeeeeeeeed", updatedFound);
+                          console.log("updated", updatedFound);
                           if (!updatedFound) {
                             throw error;
                           } else {
-                            // Si il n'y a pas d'erreur alors, l'erreur unlink est réussi
-                            console.log("Modified");
                             return res.status(200).json({
                               message: "Post modifiée",
                               post: updatedFound,
@@ -251,19 +241,17 @@ exports.updatePost = (req, res, next) => {
                   // plain: true,
                 })
                   .then((updated) => {
-                    console.log("ici:::::::::::::::", updated);
+                    console.log("ici:", updated);
                     Post.findOne({
                       where: {
                         id: postId,
                       },
                     })
                       .then((updatedFound) => {
-                        console.log("updateeeeeeeeeeeeed", updatedFound);
+                        console.log("updateeeed", updatedFound);
                         if (!updatedFound) {
                           throw error;
                         } else {
-                          // Si il n'y a pas d'erreur alors, l'erreur unlink est réussi
-                          console.log(updatedFound, "lol");
                           return res.status(200).json({
                             message: "Post modifiée",
                             post: updatedFound,
@@ -327,13 +315,9 @@ exports.deletePost = (req, res, next) => {
             postId, //postId
           })
             .then((commentFind) => {
-              console.log("iciiiii")
-              //Une fois le post qui correspond a l'id de l'user trouvé, on extrait le nom du fichier (image) à supprimer et on supprimer avec fs.unlinnk, et une fois que la suppression du fichier est fait, on fait la suppreson de l'objet de la base de données
               if (postFind.imageUrl != null) {
                 const fileName = postFind.imageUrl.split("/images/")[1];
                 fs.unlink(`images/${fileName}`, () => {
-                 // if (user && (user.isAdmin || user.id == postFind.UserId)) {
-                    //on fait une condition, si c'est un admin (true) ou si c'est l'id de l'utilisateur, on peut accder a la publication
                     if (
                       (postFind && commentFind) ||
                       (postFind && !commentFind)
@@ -370,23 +354,14 @@ exports.deletePost = (req, res, next) => {
                   }*/
                 });
               } else {
-                console.log("ici::::::::::::::::::::", postFind.publication);
-                  console.log("ici22::::::::::::::::::::", (postFind && !commentFind));
-                // Supression sans image
-              //  if (user && (user.isAdmin || user.id == postFind.UserId)) {                
-                  //on fait une condition, si c'est un admin (true) ou si c'est l'id de l'utilisateur, on peut accder a la publication
                   if ((postFind && commentFind) || (postFind && !commentFind)) {
-                    //Si l'id de post a été envoyé dans la requête
-                    //Il faut faire une requête postId pour vérifier s'il existe en bdd avant destroy, si non on envoie message erreur
                     Post.destroy({
-                      // attributes: ['id', 'postContent', 'imageUrl'],// Mettre les attributs pour pouvoir trouver l'id du post et l'effacer par rapport à l'id de user qu'il a mis pour qu'il puisse effacer sa pubication, admin peut effacer tous le monde pub
-                      where: { id: postId }, // Alors, on trouve l'id du poste cet utilisateur là
+                      where: { id: postId },
                     })
                       .then((destroyed) => {
                         if (!destroyed) {
                           throw error;
                         } else {
-                          // Si il n'y a pas d'erreur alors, l'erreur unlink est réussi
                           console.log("File deleted!");
                         }
                         return res.status(200).json({
@@ -419,14 +394,8 @@ exports.deletePost = (req, res, next) => {
           console.error(error.message);
           res.status(404).json({ message: "La publication n'existe pas!" });
         });
-  /*  })
-    .catch((error) => {
-     // error.console(error.message);
-      return res.status(500).json({ error });
-    });*/
 };
 exports.likeApost = (req, res, next) => {
-  console.log("=============lile=======");
   const postId = req.body.postId;
 	const userId = req.body.userId;
   const likeValue = req.body.like;
@@ -434,17 +403,12 @@ exports.likeApost = (req, res, next) => {
     .then(post => {
       switch(likeValue) {
         case 1: // le user like le post
-        console.log("=============like value ok=======");
-          // Ajouter le couple postId userId de la table de jointure
           LikePost.create({ postId, userId })
             .then(() => {
-              console.log("=============update like=======");
-              // Mettre à jour le post
               post.update(
                 { likes: post.likes + 1 },
                 { where: { id: postId } },
               ).then(() => {
-                console.log("=============c'est modifie !!!! ======");
                 Post.findAll({
                   order: [['createdAt', 'DESC']],
                   attributes: { 
@@ -469,7 +433,6 @@ exports.likeApost = (req, res, next) => {
                   // Ajout de la table des likes au renvoi des posts
                   LikePost.findAll()
                     .then((likes) => {
-                      console.log("=============find all=======");
                     likes.forEach(like => {
                       let post = posts.findIndex(search => search.id == like.postId);
                       if (post != null) {

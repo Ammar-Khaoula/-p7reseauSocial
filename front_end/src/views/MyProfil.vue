@@ -3,32 +3,42 @@
       <HelloWorld/>  
         <div class="profilMi">
           <a>
-                <div class="p-2 mb-3">
-          <section v-if="preview">
-            <img :src="preview" class="img-fluid" />
-            <div class="d-flex">
-              <p class="mb-0 mt-2">file name: {{ image.name }}</p>
-              <button class="trash mt-1 ms-5"
-                @click="resetImage" size="2x" for="imageFile">
-              </button>
-            </div>
-          </section>
-        </div>
+            <div class="p-2 mb-3">
+            <section v-if="preview">
+              <img :src="preview" class="img-fluid" />
+              <div class="d-flex">
+                <p class="mb-0 mt-2">file name: {{ image.name }}</p>
+                  <button class="trash mt-1 ms-5"
+                    @click="resetImage" size="2x" for="imageFile">
+                  </button>
+              </div>
+            </section>
+           </div>
            <img class="rounded-circle profile-pic" src="../assets/icon.png"  alt="profile image" style="height:200px;"/>
           </a>
-           <div class="header-profil d-flex flex-row justify-content-center">
+          <div class="header-profil d-flex flex-row justify-content-center">
             <div><h1> {{users.last_name}} {{users.first_name}}</h1>  
-            <h4>{{users.bio}}</h4></div> 
+              <h4>{{users.bio}}</h4>
+            </div> 
             <div><profilForm/></div>
-           </div>
+          </div>
         </div>
         <postWrite/>
-    <main class="pub_post" v-for="post in posts" :key="post.id">
-        <div class="title_pub">
+     <main class="pub_post" v-for="post in posts" :key="post.id">
+          <div class="title_pub">
             <h2> {{post.User.last_name}} {{post.User.first_name}}</h2>
             <span> {{ new Date(post.createdAt).toLocaleString() }}</span>
-        </div>
-       <div class="contenu">
+          </div>
+      <div class="contenu d-flex justify-content-around">
+        <div>
+            <p class="mb-3 tx-14 ms-3">
+              {{post.publication}}
+            </p>
+            <a class="aCursor" data-bs-toggle="modal" data-bs-target="#postModalImage"
+                data-bs-whatever="@mdo" @click="showModal(post)" v-if="post.imageUrl">
+              <img class="rounded mx-auto d-block" :src="post.imageUrl" alt="Image de Post" style="height:200px; width:200px;"/>
+            </a>
+        </div>  
         <div class="btn-group"
           v-if="(user.userId == post.UserId) || user.isAdmin">
           <button
@@ -49,19 +59,8 @@
               </button>
             </li>
           </ul>
-       </div>
-        <div>
-            <p class="mb-3 tx-14 ms-3">
-              {{post.publication}}
-            </p>
         </div>
-        <div>
-            <a class="aCursor" data-bs-toggle="modal" data-bs-target="#postModalImage"
-                data-bs-whatever="@mdo" @click="showModal(post)" v-if="post.imageUrl">
-              <img class="rounded mx-auto d-block" :src="post.imageUrl" alt="Image de Post" style="height:200px; width:200px;"/>
-            </a>
-        </div>  
-        </div>
+      </div>
       <div class="d-flex post-actions">
         <label class=" d-flex align-items-center text-muted me-4">
           <i class="mb-1 me-2 far fa-comment-alt"></i>
@@ -69,27 +68,40 @@
           <p> {{post.commentaires.length}}</p>
         </label>
       </div>
-        <commentWrite :postId="post.id"></commentWrite>  
+    <commentWrite :postId="post.id"></commentWrite>  
     <div class="commentaire_post" v-for="commentaire in post.commentaires" :key="commentaire.id" :commentaire="commentaire">
-      <div>
-          <h2> {{commentaire.User.last_name}} {{commentaire.User.first_name}}</h2>
-          <p>{{ commentaire.comment }}</p>
-          <a class="aCursor" data-bs-toggle="modal" data-bs-target="#postModalImage"
-           data-bs-whatever="@mdo" @click="showModal(commentaire)"
-           v-if="commentaire.imageUrl">
-           <img class="rounded mx-auto d-block" :src="commentaire.imageUrl" alt="Image de Post" style="height:200px; width:200px;"/>
-          </a> 
-        </div> 
-      <div class="icon" v-if="(user.userId == commentaire.UserId || user.isAdmin)">
-        <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#commentModal" data-bs-whatever="@mdo"
-                @click="showModal(commentaire)">
-          <i class="fas fa-edit"></i>
-        </button>
-        <button class="dropdown-item" @click="_deleteComment(commentaire)">
-          <i class="fas fa-trash-alt"></i>
-        </button>
+      <h2> {{commentaire.User.last_name}} {{commentaire.User.first_name}}</h2>
+        <div class="d-flex justify-content-between">
+          <div>
+            <p>{{ commentaire.comment }}</p>
+            <a class="aCursor" data-bs-toggle="modal" data-bs-target="#postModalImage"
+              data-bs-whatever="@mdo" @click="showModal(commentaire)"
+              v-if="commentaire.imageUrl">
+             <img class="rounded mx-auto d-block" :src="commentaire.imageUrl" alt="Image de Post" style="height:200px; width:200px;"/>
+            </a> 
+          </div> 
+          <div class="icon" v-if="(user.userId == commentaire.UserId || user.isAdmin)">
+            <button
+              class="btn btn-Info dropdown-toggle me-5"
+              type="button" id="defaultDropdown1" data-bs-toggle="dropdown"
+               data-bs-auto-close="true" aria-expanded="false">
+            </button>
+                <ul class="dropdown-menu" aria-labelledby="defaultDropdown">
+                  <li>
+                    <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#commentModal" data-bs-whatever="@mdo"
+                      @click="showModal(commentaire)">
+                       <i class="fas fa-edit"></i>
+                    </button>
+                  </li>
+                  <li>
+                    <button class="dropdown-item" @click="_deleteComment(commentaire)">
+                      <i class="fas fa-trash-alt"></i>
+                    </button>
+                  </li>
+                </ul>
+          </div>
+        </div>
       </div>
-     </div>
     </main> 
   </section>      
 </template>
@@ -194,7 +206,8 @@ export default {
     margin-bottom: 30px;
 }
 .title_pub{
-    text-align: left;
+  text-align: left;
+  border-bottom: 1px #d3d2d2 solid;
 }
 .title_pub h2{
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
@@ -209,10 +222,14 @@ export default {
     padding: 10px;
 }
 .contenu{
-    border-bottom: 1px #d4d4d3 solid;
-    padding: 10px;
+  border-bottom: 1px #d4d4d3 solid;
+  padding: 10px;
 }
-
+.btn-group{
+  width: 38px;
+  height: 40px;
+  padding-top: 3px;
+}
 .post-actions{
     padding: 20px;
 }
@@ -222,29 +239,26 @@ export default {
     border-radius: 25px;
     padding: 10px;
     margin-top: 10px;
-    width: 80%;
+    width: 95%;
 }
 .commentaire_post h2{
     text-align: left;
     font-size: 14px;
     font-weight: bolder;
 }
-.icon{
-  background: hotpink;
-  
-}
 .dropdown-item i {
   font-size: 16px;
 }
 .fa-edit{
   color: green;
-  position: relative;
-  left: 250px;
 }
 .fa-trash-alt{
   color: red;
 }
 @media (max-width: 768px){
+  .commentaire_post{
+    width: 100%;
+}
   h1{
     font-weight: bold;
   }

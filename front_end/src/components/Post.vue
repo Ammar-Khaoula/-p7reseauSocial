@@ -1,15 +1,30 @@
 <template>
-  <div class="card-header">
+  <section class="card-header">
         <div class="d-flex">
           <img class="rounded-circle profile-pic" src="../assets/icon.png"  alt="profile image"/>
           <h2 @click="getMyProfil"> {{post.User.last_name}}  {{post.User.first_name}} <br>
             <span> {{ new Date(post.createdAt).toLocaleString() }}</span>
           </h2>  
         </div> 
-    <section class="card-body">
-              <!--=========== a supprimer  -->
-          <p>{{user.userId}} -- {{post.UserId}} -- {{user.isAdmin}}</p>
-      <main class="btn-group"
+    <div class="card-body d-flex justify-content-around">
+      <div class="form-group pub_post" v-if="post">
+      <!--<select class="form-control" id="exampleFormControlSelect1">
+        <option>{{ post.publication }}</option>
+      </select>-->
+      <!--<span>Message is: {{ likes }}</span>
+     <br> 
+     <input type="text" v-model="likes" placeholder="edit me">-->
+
+         <p class="mb-3 tx-14 ms-3">
+           {{ post.publication }}  
+         </p>  
+         <a class="aCursor" data-bs-toggle="modal" data-bs-target="#postModalImage"
+           data-bs-whatever="@mdo" @click="showModal(post)"
+           v-if="post.imageUrl">
+           <img class="rounded mx-auto d-block" :src="post.imageUrl" alt="Image de Post" id="image-post"/>
+         </a>
+      </div>
+      <div class="btn-group"
           v-if="showButton == (user.userId == post.UserId || user.isAdmin)">
           <button
             class="btn btn-Info dropdown-toggle me-5"
@@ -32,40 +47,23 @@
               </button>
             </li>
           </ul>
-    </main>
-    <div class="form-group pub_post" v-if="post">
-      <!--<select class="form-control" id="exampleFormControlSelect1">
-        <option>{{ post.publication }}</option>
-      </select>-->
-      <!--<span>Message is: {{ likes }}</span>
-     <br> 
-     <input type="text" v-model="likes" placeholder="edit me">-->
-
-        <p class="mb-3 tx-14 ms-3">
-         {{ post.id }} -- {{ post.publication }}  
-        </p>  
-        <a class="aCursor" data-bs-toggle="modal" data-bs-target="#postModalImage"
-          data-bs-whatever="@mdo" @click="showModal(post)"
-          v-if="post.imageUrl">
-          <img class="rounded mx-auto d-block" :src="post.imageUrl" alt="Image de Post" id="image-post"/>
-        </a>
       </div>
+   </div>
       <div class="d-flex post-actions">
-        <label class=" d-flex align-items-center text-muted me-4 text-decoration-none" for="commentText">
+        <label class="d-flex align-items-center text-muted me-4 text-decoration-none" for="commentText">
           <i class="mb-1 me-2 far fa-comment-alt"></i>
             Commentaire 
            <p> {{post.commentaires.length}}</p>
         </label>
       </div>
       <div class="card-footer">
-        <commentWrite :postId="post.id"></commentWrite>
+        <commentWrite class="commentWrite" :postId="post.id"></commentWrite>
       <div>     
        <comment v-for="commentaire in post.commentaires" :key="commentaire.id" :commentaire="commentaire" />
       </div>
         <updateComment/>
     </div>
-   </section>
-  </div>
+  </section>
 </template>
 
 <script>
@@ -144,19 +142,16 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .card-header{
-    background: rgb(249, 235, 234, 0.3);
-    border-top: 0.5rem #fad5d2 solid;
-    border-top-right-radius: 40px;
-    margin: auto;
-    margin-bottom: 30px;
-    width: 60%;
-    padding: 10px;
+  background: rgb(249, 235, 234, 0.3);
+  border-top: 0.5rem #fad5d2 solid;
+  border-top-right-radius: 40px;
+  margin: auto;
+  margin-bottom: 30px;
+  width: 60%;
+  padding: 10px;
 }
 .btn{
-  position: relative;
-  left: 285px;
-  bottom: 55px;
-  background: #fcd3ad;
+  height: 40px;
 }
 .pub_post{
   padding: 20px;
@@ -191,14 +186,10 @@ a{
 .card-footer{
   background: rgb(249, 235, 234, 0.3);
 }
+
 @media (max-width: 768px){
-  .card-header{
+.card-header{
     width: 100%;
-}
-.btn{
-  position: relative;
-  left: 285px;
-  bottom: 55px;
 }
 .pub_post{
   padding: 20px;
@@ -220,6 +211,14 @@ a{
 .post-actions{
   border-top:1px rgb(219, 217, 217, 0.7) solid;
   padding-top: 20px;
+}
+.card-footer{
+  width: 100%;
+  margin: auto;
+  padding: 10px;
+}
+.commentWrite{
+  width: 100%;
 }
 }
 </style>

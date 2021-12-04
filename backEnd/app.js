@@ -15,7 +15,6 @@ const path = require("path");
 // Connexion de l'API à la bdd
 db.sequelize.sync().then(result => {
 	// db.sequelize.sync({ force: true }).then(result => {
-	//console.log(result);
 }).catch( error =>  { console.log(error )});
 
 require("dotenv").config();

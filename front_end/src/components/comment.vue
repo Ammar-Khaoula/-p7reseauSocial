@@ -1,28 +1,39 @@
 <template>
-  <section class="input-group">
-      <div class="me-perso d-flex flex-column">
+  <section class="input-group d-flex flex-column">
+      <div class="me-perso">
           <h2> {{commentaire.User.last_name}} {{commentaire.User.first_name}}</h2>
-          <div class="contenue d-flex flex-wrap">
+      </div>
+        <div class="contenue">
+          <div>
             <a class="aCursor" data-bs-toggle="modal" data-bs-target="#postModalImage"
               data-bs-whatever="@mdo" @click="showModal(commentaire)"
               v-if="commentaire.imageUrl">
-              <img class="rounded mx-auto d-block" :src="commentaire.imageUrl" alt="Image de Post" style="height:200px; width:auto;"/>
+              <img  class="rounded mx-auto d-block" :src="commentaire.imageUrl" alt="Image de Post" style="height:130px; width:150;"/>
             </a>
             <p>{{ commentaire.comment }}</p>
-          </div>
-      </div> 
-           <!--=========== a supprimer  -->
-         <!-- <p>{{user.userId}} -- {{commentaire.userId}} -- {{user.isAdmin}}</p> -->        
-      <div class="btn-group"
+          </div>       
+        <div class="btn-group"
           v-if="(user.userId == commentaire.userId || user.isAdmin)">
-            <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#commentModal" data-bs-whatever="@mdo"
+          <button
+            class="btn btn-Info dropdown-toggle me-5"
+            type="button" id="defaultDropdown1" data-bs-toggle="dropdown"
+            data-bs-auto-close="true" aria-expanded="false">
+          </button>
+          <ul  class="dropdown-menu" aria-labelledby="defaultDropdown">
+            <li>
+              <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#commentModal" data-bs-whatever="@mdo"
                 @click="showModal(commentaire)">
                 <i class="fas fa-edit"></i>
-            </button>
-            <button class="dropdown-item" @click="_deleteComment">
+              </button>
+            </li>
+            <li>
+              <button class="dropdown-item" @click="_deleteComment">
                 <i class="fas fa-trash-alt"></i>
-            </button>
-      </div>
+              </button>
+            </li>
+          </ul>
+        </div>
+    </div> 
   </section>
 </template>
 <script>
@@ -92,18 +103,12 @@ h2{
   border-radius: 25px;
   padding: 10px;
   margin-top: 10px;
-  width: 80%;
-}
-.contenue{
-  justify-content: space-between;
+  width: 90%;
 }
 .me-perso h2{
-  float: left;
+  text-align: left;
 }
-.btn-group{
-  position: absolute;
-  left: 400px;
-}
+
 .dropdown-item i {
   font-size: 16px;
 }
@@ -113,6 +118,10 @@ h2{
 .fa-trash-alt{
   color: red;
 }
+.contenue{
+  display: flex;
+  justify-content: space-between;
+}
 @media (max-width: 768px){
   h2{
   font-size: 14px;
@@ -121,17 +130,7 @@ h2{
 .input-group{
   padding: 5px;
   margin-top: 10px;
-  width: 230px;
-}
-.contenue{
-  justify-content: space-between;
-}
-.me-perso h2{
-  float: left;
-}
-.btn-group{
-  position: absolute;
-  left: 400px;
+  width: 100%;
 }
 .dropdown-item i {
   font-size: 14px;

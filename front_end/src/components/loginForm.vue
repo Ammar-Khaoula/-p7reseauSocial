@@ -165,6 +165,9 @@ input{
 }
 
 @media (max-width: 768px){
+.section{
+ width: 90%;
+}
 p{
     font-size: 16px;
 }

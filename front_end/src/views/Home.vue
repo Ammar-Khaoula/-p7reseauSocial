@@ -1,11 +1,10 @@
 <template>
     <body class="container">
-    <section class="profile-page tx-13">
+    <section class="profile-page">
       <HelloWorld id="helloWorld"></HelloWorld>  
       <postWrite></postWrite>
     <div class="pubPost">
-      <Post v-for="post in posts" :key="post.id" :post="post" />
-     
+      <Post v-for="post in posts" :key="post.id" :post="post" /> 
     <updatePost></updatePost>
     </div>
     </section>

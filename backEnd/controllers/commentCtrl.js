@@ -18,8 +18,6 @@ exports.createComment = (req, res, next) => {
   const urlImage = req.file
     ? `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
     : null;
-  console.log("===========" + req.body.comment + " user "+userId);
-  console.log("====" + postId);
 
   const comment = new Comment({
     comment: commentPost,
@@ -102,8 +100,6 @@ exports.getAllCommentbyUser = (req, res, next) => {
   order: [["id", "DESC"]],
 })
     .then((myComment) => {
-      console.log("*****************length :    " + myComment.length);
-
     if (myComment) {
       return res.status(200).json({ message: "comments trouvé", myComment });
     } else {
@@ -119,10 +115,7 @@ exports.updateMyComments = (req, res, next) => {
 
   const commentId = req.params.id;
   const userId = req.body.userId;
-
-  console.log("+++++ commentId : " + commentId);
-  console.log("user Id : " + userId);
-    const commentObject = req.file
+  const commentObject = req.file
     ? {
         //like: req.body.like,
         imageUrl: `${req.protocol}://${req.get("host")}/images/${
@@ -147,10 +140,8 @@ exports.updateMyComments = (req, res, next) => {
         },
       })
         .then((commentFind) => {
-          console.log("debut update comment+++ ", commentFind.comment);
           if (commentFind.imageUrl != null) {
             const fileName = commentFind.imageUrl.split("/images/")[1];
-            console.log("fileName", fileName);
             fs.unlink(`images/${fileName}`, () => {
               if (user && (user.isAdmin || user.id == commentFind.UserId)) {
                 if (commentFind) {
@@ -158,7 +149,6 @@ exports.updateMyComments = (req, res, next) => {
                     where: { id: commentId },
                   })
                     .then((updated) => {
-                      console.log("ici updateeeeeeeeeed", updated);
                       Comment.findOne({
                         where: {
                           id: commentId,
@@ -168,8 +158,6 @@ exports.updateMyComments = (req, res, next) => {
                           if (!updatedFound) {
                             throw error;
                           } else {
-                            // Si il n'y a pas d'erreur alors, l'erreur unlink est réussi
-                            console.log("Modified!");
                             return res.status(200).json({
                               message: "Commentaire modifiée",
                               comments: updatedFound,
@@ -206,7 +194,7 @@ exports.updateMyComments = (req, res, next) => {
                   where: { id: commentId },
                 })
                   .then((updated) => {
-                    console.log("ici updateeeeeeeeeed", updated);
+                    console.log("ici updateed", updated);
                     Comment.findOne({
                       where: {
                         id: commentId,
@@ -216,8 +204,6 @@ exports.updateMyComments = (req, res, next) => {
                         if (!updatedFound) {
                           throw error;
                         } else {
-                          // Si il n'y a pas d'erreur alors, l'erreur unlink est réussi
-                          console.log("Modified!");
                           return res.status(200).json({
                             message: "Commentaire modifiée",
                             comments: updatedFound,
@@ -261,29 +247,20 @@ exports.updateMyComments = (req, res, next) => {
     });
 };
 exports.deleteMyComment = (req, res, next) => {
-    const commentId = req.params.id; // l'id du comment
-    const userId = req.params.userId; //l'id de user
-  
-  console.log(userId+"++++++++cmt: " + commentId+" user ");
+    const commentId = req.params.id; 
+    const userId = req.params.userId; 
   User.findOne({
-      //On cherche une id d'utilisateur
       attributes: ["id", "email", "isAdmin"],
-      where: { id: userId }, //l'id de user est trouvé et compare avec l'id dans la base de données
+      where: { id: userId }, 
     })
       .then((user) => {
-        //après avoir trouvé l'id de user
-        console.log("***********user est trouvé***********");
         Comment.findOne({
           where: {
             id: commentId,
           },
         })
           .then((comment) => {
-            console.log("***********commentaire est trouvé***********"+user.id +"+++"+comment.UserId);
-            console.log("+++++++" + comment.id);
             if (comment.imageUrl != null) {
-              // Je ne comprend pas
-              //Une fois le post qui correspond a l'id de l'user trouvé, on extrait le nom du fichier (image) à supprimer et on supprimer avec fs.unlinnk, et une fois que la suppression du fichier est fait, on fait la suppreson de l'objet de la base de données
               const fileName = comment.imageUrl.split("/images/")[1];
               fs.unlink(`images/${fileName}`, () => {
                 if (user && (user.isAdmin || user.id == comment.UserId)) {
@@ -313,15 +290,9 @@ exports.deleteMyComment = (req, res, next) => {
                 }
               });
             } else {
-                console.log("-----" + user.isAdmin+comment.UserId);
-                console.log("--///---" + (user.id == comment.UserId)+user.id);
               if (user && (user.isAdmin || user.id == comment.UserId)) {
-                //on fait une condition, si c'est un admin (true) ou si c'est l'id de l'utilisateur, on peut accder a la publication
-                //Si l'id de post a été envoyé dans la requête
-                //Il faut faire une requête postId pour vérifier s'il existe en bdd avant destroy, si non on envoie message erreur
                 Comment.destroy({
-                  // attributes: ['id', 'postContent', 'imageUrl'],// Mettre les attributs pour pouvoir trouver l'id du post et l'effacer par rapport à l'id de user qu'il a mis pour qu'il puisse effacer sa pubication, admin peut effacer tous le monde pub
-                  where: { id: comment.id }, // Alors, on trouve l'id du poste cet utilisateur là
+                  where: { id: comment.id },
                 })
                   .then(() => {
                     return res.status(200).json({

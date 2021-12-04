@@ -91,7 +91,7 @@ export default {
 }
 .addImage {
   position: relative;
-  right: 75px;
+  right: 45px;
   margin-top: 38px;
 }
 .addImage span{
@@ -132,7 +132,7 @@ textarea{
   height: 40px;
   margin: 10px;
   padding: 10px;
-  width: 230px;
+  width: 180px;
 }
 .btn-edit-profile{
   width: 70px;
