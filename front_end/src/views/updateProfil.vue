@@ -4,30 +4,14 @@
       <div class="edit-compte">
             <h3>
               Paramètres généraux du compte
-            </h3>
-
-     <div class="d-flex justify-content-between border-bottom edit-row edit-row--transition">
-              <div class="ml-2 d-flex">
-                <span class="mt-3 mb-3">photo:</span>
-              </div>
-                <div class="ml-2 d-flex">
-                  <span class="mt-3 mb-3">{{ user.imagesURL }}</span>
-              </div>
-                <div class="ml-2 d-flex">
-                <div class="col-sm-6 col-md-9 mt-2">
-                  <input class="form-control mr-sm-2 bg-light"
-                    v-on:change="handleFileUpload()" type="file"/>
-                </div>
-              </div>
-              </div>
-
+            </h3> 
             <div class="d-flex justify-content-between border-bottom edit-row edit-row--transition">
               <div class="ml-2 d-flex">
                 <span class="mt-3 mb-3">Prénom:</span>
               </div>
                 <div class="ml-2 d-flex">
                   <span class="mt-3 mb-3">{{ user.first_name }}</span>
-              </div>
+                </div>
                 <div class="ml-2 d-flex">
                 <div class="col-sm-6 col-md-9 mt-2">
                   <input class="form-control mr-sm-2 bg-light"

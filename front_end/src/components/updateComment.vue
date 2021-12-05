@@ -20,7 +20,6 @@
               </label>
             </div>
           </div>
-          <!-- Preview image start here -->
           <div class="p-2 mb-3">
             <template v-if="preview">
                 <img :src="preview" class="img-fluid" />
@@ -29,7 +28,6 @@
               </div>
             </template>
           </div>
-          <!-- Preview image end here -->
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"

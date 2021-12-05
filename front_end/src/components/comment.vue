@@ -94,7 +94,7 @@ h2{
   font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
 .input-group{
-  border: 1px #fae4e2 solid;
+  border: 7px #fae4e2 solid;
   background: rgb(249, 235, 234);
   border-radius: 25px;
   padding: 10px;

@@ -7,13 +7,13 @@
               <i class="fas fa-home"></i>
             </router-link>
             <div @click="getMyProfil" class="item" aria-current="page" href="#"> 
-               profile 
+               <i class="fas fa-user-alt"></i> 
             </div>
             <div @click="getAllUsers" class="item">
                <i class="fas fa-users"></i>
             </div>
             <router-link class="item" :to="{ name: 'login' }" href="javascript:void(0)" @click="logOutClick">
-               Deconnexion
+               <i class="fas fa-sign-out-alt"></i>
             </router-link>
          </div>
       </div>

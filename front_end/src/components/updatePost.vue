@@ -98,7 +98,6 @@ export default {
     
   },
   computed: {
-    //  getting the current user via the state by mapGetters
     ...mapState(["user", "post"]),
   },
 };

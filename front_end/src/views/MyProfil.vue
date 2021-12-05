@@ -1,21 +1,8 @@
 <template>
   <section>
       <HelloWorld/>  
-        <div class="profilMi">
-          <a>
-            <div class="p-2 mb-3">
-            <section v-if="preview">
-              <img :src="preview" class="img-fluid" />
-              <div class="d-flex">
-                <p class="mb-0 mt-2">file name: {{ image.name }}</p>
-                  <button class="trash mt-1 ms-5"
-                    @click="resetImage" size="2x" for="imageFile">
-                  </button>
-              </div>
-            </section>
-           </div>
+        <div class="profilMi">        
            <img class="rounded-circle profile-pic" src="../assets/icon.png"  alt="profile image" style="height:200px;"/>
-          </a>
           <div class="header-profil d-flex flex-row justify-content-center">
             <div><h1> {{users.last_name}} {{users.first_name}}</h1>  
               <h4>{{users.bio}}</h4>

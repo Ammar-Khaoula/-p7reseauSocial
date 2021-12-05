@@ -465,7 +465,7 @@ export default createStore({
             console.log(response.data);
             commit("_updateComments", response.data);
             resolve(response);
-            window.location.reload();
+            //window.location.reload();
           })
           .catch((error) => {
             console.log(error);

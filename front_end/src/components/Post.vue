@@ -14,7 +14,7 @@
          <a class="aCursor" data-bs-toggle="modal" data-bs-target="#postModalImage"
            data-bs-whatever="@mdo" @click="showModal(post)"
            v-if="post.imageUrl">
-           <img class="rounded mx-auto d-block" :src="post.imageUrl" alt="Image de Post" id="image-post"/>
+           <img class="rounded mx-auto d-block" :src="post.imageUrl" alt="Image de Post" id="image-post" style="height:130px; width:150;"/>
          </a>
       </div>
       <div class="btn-group"

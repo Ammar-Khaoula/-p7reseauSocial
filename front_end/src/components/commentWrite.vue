@@ -20,8 +20,6 @@
               Publier
           </button>
         </div>
-      
-
       <div class="p-2 mb-3">
         <section v-if="preview">
           <img :src="preview" class="img-fluid" />
