@@ -49,7 +49,8 @@
           <ul  class="dropdown-menu" aria-labelledby="defaultDropdown">
             <li>
               <button class="dropdown-item"  type="button"                  
-                @click="_updatePost" >
+                
+                @click="showModal(post)">
                 Modifier post
               </button>
             </li>
@@ -89,7 +90,7 @@
                 <ul class="dropdown-menu" aria-labelledby="defaultDropdown">
                   <li>
                     <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#commentModal" data-bs-whatever="@mdo"
-                      @click="showModal(commentaire)">
+                      @click="showModals(commentaire)">
                        <i class="fas fa-edit"></i>
                     </button>
                   </li>
@@ -145,17 +146,17 @@ export default {
       this.image = null;
       this.preview = null;
     },
-    _updatePost: function(){
-      const dynamicId = this.post.id;
-     // this.$router.push({ name: "updatePost"  }); 
-      this.$store.dispatch("updatePost", { dynamicId });
+    showModal(post) {
+      const dynamicId = post.id;
+      console.log(" id ++++++++"+dynamicId);
+      this.$store.dispatch("getPostById", { dynamicId });
     },
     deletePost: function (post) {
       const dynamicId = post.id;
       console.log("sssssssss: "+dynamicId)
       this.$store.dispatch("deletePost", { dynamicId });
     },
-    showModal(commentaire) {
+    showModals(commentaire) {
       this.$store.dispatch("getAllcommentaire", commentaire);
     },
     _deleteComment: function (commentaire) {

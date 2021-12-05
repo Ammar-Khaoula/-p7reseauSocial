@@ -3,16 +3,22 @@
                 <router-link class="item" :to="{ name: 'updateProfil' }">
                   <i class="fas fa-user-edit"></i>
                 </router-link>
+                <updatePost></updatePost>
     </section> 
 </template>
 <script>
-import { mapState } from 'vuex'
+import { mapState } from 'vuex';
+import updatePost from "../components/updatePost.vue";
+
 //import moment from "moment";
 export default{
     name: 'profilForm',
     propos:{
       user: Object,
       post: Object,
+    },
+    components:{
+      updatePost,
     },
     data() {
     return {

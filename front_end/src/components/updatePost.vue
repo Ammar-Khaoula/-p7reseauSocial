@@ -1,5 +1,5 @@
 <template>
-  <div class="modal fade" id="postModal" tabindex="-1"
+  <section class="modal fade" id="postModal" tabindex="-1"
     aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -8,56 +8,38 @@
           </button>
         </div>
         <div>
-          <label id="postModal" for="message-text" class="col-form-label">
-            Modifiez votre post ici :</label>
           <div id="postModal" class="d-flex justify-content-center">
             <div class="input-group input-group-sm mb-3 mt-3 d-flex flex-row justify-content-start">
-              <!-- image -->
-              <img class="rounded-circle img-xs" src="../assets/icon.png" alt="" style="width:200px; height:200px;"/>
               <div class="col-sm-5 col-md-8 ms-3">
                 <input class="form-control mr-sm-2 bg-light"
-                      v-model="publication"
-                     :maxlength="max"
-                      type="text"
-                     ref="resetInput" 
-                     placeholder="Publier ici..." 
-                     aria-label="publication" 
-                     id="publication"/>
+                    v-model="publication"
+                    :maxlength="max"
+                    type="text"
+                    ref="resetInput" 
+                    placeholder="Republier ici..." 
+                    aria-label="publication" 
+                    id="publication"/>
                   
               </div>
-              <!-- add button here -->
-   <label class="addImage">
-    <span class="title-image">Ajouter image</span>
-    <input accept="image/*" type="file" id="FileInput" ref="image"
-      name="image_attachment_upload" v-on:change="handleFileUpload()"/>
-  </label>
-</div>
-</div>
-     <div class="p-2 mb-3">
-        <template v-if="preview">
-        <img :src="preview" class="img-fluid" />
-        <div class="d-flex">
-        <p class="mb-0 mt-2">file name: {{ image.name }}</p>
-        </div>
-        </template>
+              <!--*************images********* -->
+        <label class="addImage">
+           <span class="title-image">Image</span>
+           <input accept="image/*" type="file" id="FileInput" ref="image"
+           name="image_attachment_upload" v-on:change="handleFileUpload()"/>
+        </label>
+  </div>
     </div>
-          <!-- Preview image end here -->
-  
+    <!--*************images********* -->
+      <div class="p-2 mb-3">
+        <main v-if="preview">
+            <img :src="preview" class="img-fluid" />
+          <div class="d-flex">
+             <p class="mb-0 mt-2">file name: {{ image.name }}</p>
+          </div>
+        </main>
+      </div>  
    </div>
-
-  <!--<div class="pub_post" v-if="post"> 
-        <p class="mb-3 tx-14 ms-3">
-         {{ post.id }} -- {{ post.publication }}
-          
-        </p>  
-        <a class="aCursor" data-bs-toggle="modal" data-bs-target="#postModalImage"
-          data-bs-whatever="@mdo" 
-          v-if="post.imageUrl">
-          <img class="rounded mx-auto d-block" :src="post.imageUrl" alt="Image de Post"/>
-        </a>
-      </div>-->
-
-        <div class="modal-footer">
+       <div class="modal-footer">
           <button type="button" class="btn btn-secondary"
             data-bs-dismiss="modal" @click="closedButton()">
             Close
@@ -72,20 +54,20 @@
         </div>
       </div>
     </div>
-  </div>
+  </section>
 </template>
 <script>
 import { mapState } from "vuex";
 export default {
   name: "updatePost",
+
   data() {
     return {
-      id: "",
       publication: "",
       image: "",
       max: 280,
       preview: "",
-      post:"",
+      likes: 0,
     };
   },
   methods: {
@@ -105,21 +87,50 @@ export default {
       this.image = null;
       this.preview = null;
     },
+
     _updatePost: function () {
       const publication = this.publication;
-      console.log(this.post +" ppp===***** "+publication);
       const image = this.image;
-      const dynamicId = this.post.id;
-      console.log("id ===***** "+dynamicId);
-      this.$store.dispatch("updatePost", { publication, image, dynamicId });
+      const likes= this.likes;
+      this.$store.dispatch("updatePost", { publication, image, likes });
       this.$refs["resetInput"].value = "";
     },
     
   },
   computed: {
     //  getting the current user via the state by mapGetters
-    ...mapState(["user", "posts", "post"]),
+    ...mapState(["user", "post"]),
   },
 };
-
 </script>
+<style scoped>
+.addImage {
+  margin: auto;
+  padding: 10px;
+  
+}
+.addImage span{
+  cursor: grab;
+  padding: 19px 10px;
+  color:white;
+  border-radius: 10px;
+  background: rgb(253, 200, 200); 
+}
+.addImage input{
+  position: absolute;
+  top: 0; left: 0;  
+  opacity: 0;
+}
+.modal-content{
+  background: #FDEDEC;
+}
+.modal-header{
+  background: #fad4d4;
+}
+
+@media (max-width: 768px){
+.addImage span{
+  padding: 5px 7px; 
+}
+}
+</style>

@@ -8,13 +8,6 @@
         </div> 
     <div class="card-body d-flex justify-content-around">
       <div class="form-group pub_post" v-if="post">
-      <!--<select class="form-control" id="exampleFormControlSelect1">
-        <option>{{ post.publication }}</option>
-      </select>-->
-      <!--<span>Message is: {{ likes }}</span>
-     <br> 
-     <input type="text" v-model="likes" placeholder="edit me">-->
-
          <p class="mb-3 tx-14 ms-3">
            {{ post.publication }}  
          </p>  
@@ -50,7 +43,7 @@
       </div>
    </div>
       <div class="d-flex post-actions">
-        <label class="d-flex align-items-center text-muted me-4 text-decoration-none" for="commentText">
+        <label class="d-flex align-items-center text-muted me-4 text-decoration-none" for="comment">
           <i class="mb-1 me-2 far fa-comment-alt"></i>
             Commentaire 
            <p> {{post.commentaires.length}}</p>
@@ -92,10 +85,10 @@ export default {
        User: '',
        userInfo:'',
        commentaires: [],
-       commentText: "",
        image: "",
        max: 280,
        preview: "",
+       postModalId: null,
      }
    },
    methods:{   
@@ -134,7 +127,7 @@ export default {
     },
   },
    computed: {
-    ...mapState(["user", "posts"]),
+    ...mapState(["user", "posts", "post"]),
   },
 }
 </script>

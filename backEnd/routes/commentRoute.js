@@ -9,6 +9,7 @@ router.get("/", commentCtrl.getAllComments);
 router.put("/:id", multer, commentCtrl.updateMyComments);
 router.delete("/:id/:userId", commentCtrl.deleteMyComment);
 router.get("/:id", commentCtrl.getAllCommentbyUser);
+router.get("/comment/:id", commentCtrl.getCommentbyId);
 
 
 module.exports = router;

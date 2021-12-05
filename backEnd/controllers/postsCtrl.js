@@ -23,8 +23,9 @@ exports.getPostById = (req, res, next) => {
       "updatedAt",
       "UserId",
     ],
-  }) //A veifier
+  }) 
     .then((post) => {
+      console.log("========== get post by id=======");
       res.status(200).json(post); //recuperer tous le model de user
     })
     .catch((error) => {
@@ -154,20 +155,27 @@ exports.createPost = (req, res, next) => {
       return res.status(500).json({ error });
     });
 };
-exports.updatePost = (req, res, next) => { 
-    const postId = req.params.id;
-    const userId = req.body.userId; 
-    const postObject = req.file
+exports.updatePost = (req, res, next) => {
+  console.log("==============update==============");
+  const postId = req.params.id;
+  const userId = req.body.userId;
+  const publication = req.body.publication;
+  const likes = req.body.likes;
+  console.log("==============update image==============");
+  const postObject = req.file
       ? {
+        publication: req.body.publication,
           // Si la personne rajoute un nouvel image
           imageUrl: `${req.protocol}://${req.get("host")}/images/${
             req.file.filename
           }`,
+          likes: req.body.likes
         }
       : {          
-        likes: req.body.likes,
-        publication: req.body.publication
+        likes,
+        publication
         }; // Si non, on ne modifie que le postContent
+        console.log("==============debut update==============");
 
     User.findOne({
       attributes: ["id", "email", "isAdmin"],
@@ -183,16 +191,16 @@ exports.updatePost = (req, res, next) => {
         }).then((postFind) => {
           if (postFind.imageUrl != null) {
             const fileName = postFind.imageUrl.split("/images/")[1];
+            console.log("image found est ===========" + fileName);
             fs.unlink(`images/${fileName}`, () => {
               if (user && (user.isAdmin || user.id == postFind.UserId)) {
                 if (postFind) {
+                  console.log("-----update-----");
                   Post.update(postObject, {
                     where: { id: postId },
-                    // returning: true,
-                    // plain: true,
                   })
                     .then((updated) => {
-                      console.log("ici updatee", updated);
+                      console.log("ici updatee!!!!!!!!!!", updated);
                       Post.findOne({
                         where: {
                           id: postId,

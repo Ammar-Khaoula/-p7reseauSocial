@@ -3,7 +3,7 @@
     <div class="d-flex ">
       <div class="col-sm-6 col-md-9">
          <textarea class="form-control mr-sm-2 bg-light" v-model="comment"
-          type="text" placeholder="Commenter..." aria-label="Commenter" id="commentText">
+          type="text" placeholder="Commenter..." aria-label="Commenter">
          </textarea>
       </div>
       <div>

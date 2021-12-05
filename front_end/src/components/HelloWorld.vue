@@ -33,13 +33,13 @@ export default {
     },
     getMyProfil: function () {
        console.log("--------Mon profile :---- ");
-        this.$router.push({ name: "MyProfil" });
         if (this.$store.state.user.userId == -1){
         this.$router.push('/');
         return;     
         }
         this.$store.dispatch("getUserById");
         this.$store.dispatch("getAllMyPost");   
+        this.$router.push({ name: "MyProfil" });
     },
     getAllUsers: function () {
         console.log("===================Debut==============");

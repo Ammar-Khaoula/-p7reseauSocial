@@ -86,6 +86,32 @@ exports.getAllComments = (req, res, next) => {
         });
 };
 
+exports.getCommentbyId = (req, res, next) => {
+  const commentId = req.params.id;
+  console.log("comment id est :" + commentId);
+  Comment.findOne({
+    where: {
+      id: commentId,
+    },
+    attributes: [
+      "id",
+      "comment",
+      "imageUrl",
+      "likes",
+      "updatedAt",
+      "UserId",
+      "postId"
+    ],
+  }) 
+    .then((comment) => {
+      console.log("========== get post by id=======");
+      res.status(200).json(comment); //recuperer tous le model de user
+    })
+    .catch((error) => {
+      res.status(404).json(error);
+    });
+};
+
 exports.getAllCommentbyUser = (req, res, next) => {
   const userId = req.params.id;
 

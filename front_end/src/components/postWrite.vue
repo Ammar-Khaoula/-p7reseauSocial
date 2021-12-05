@@ -102,8 +102,7 @@ export default {
 .addImage {
   margin: auto;
   padding: 10px;
-  margin-right: 150px;
-  
+  margin-right: 150px;  
 }
 .addImage span{
   cursor: grab;

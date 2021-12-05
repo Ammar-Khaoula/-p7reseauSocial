@@ -22,13 +22,14 @@
           <ul  class="dropdown-menu" aria-labelledby="defaultDropdown">
             <li>
               <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#commentModal" data-bs-whatever="@mdo"
-                @click="showModal(commentaire)">
-                <i class="fas fa-edit"></i>
+              v-if="showButton == (user.userId == commentaire.userId)"
+                @click="showModals(commentaire)">
+                <i class="fas fa-edit"> Modifier</i>
               </button>
             </li>
             <li>
               <button class="dropdown-item" @click="_deleteComment">
-                <i class="fas fa-trash-alt"></i>
+                <i class="fas fa-trash-alt"> Supprimer</i>
               </button>
             </li>
           </ul>
@@ -52,7 +53,7 @@ export default {
     };
   },
 
-    methods: {
+  methods: {
         handleFileUpload() {
       let input = event.target;
       console.log(event);
@@ -69,25 +70,20 @@ export default {
       this.image = null;
       this.preview = null;
     },
-     /*_updateComment: function () {
-      const comment = this.comment;
-      const image = this.image;
-      const dynamicId = this.commentaire.id;
-      console.log("id comment========= "+dynamicId);
-      this.$store.dispatch("updateComment", { image, comment, dynamicId });
-      this.$refs["resetInput"].value = "";
-    },*/
-      _deleteComment: function () {
+    
+    _deleteComment: function () {
       const dynamicId = this.commentaire.id;
       this.$store.dispatch("deleteComment", { dynamicId });
     }, 
-    showModal(commentaire) {
-      this.$store.dispatch("getAllcommentaire", commentaire);
+    showModals(commentaire) {
+      const dynamicId = commentaire.id;
+      console.log("============"+dynamicId);
+      this.$store.dispatch("getCommentbyId", { dynamicId });
     },
 
   },
     computed: {
-    ...mapState(["user", "addComment", "commentaire"]),
+    ...mapState(["user", "commentaire"]),
   },
   }
 </script>

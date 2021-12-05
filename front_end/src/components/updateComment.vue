@@ -7,19 +7,14 @@
           </button>
         </div>
         <div>
-          <label for="message-text" class="col-form-label">
-            Modifiez votre commentaire ici :
-          </label>
           <div class="d-flex justify-content-center">
-            <div class="input-group input-group-sm mb-3 mt-3 d-flex flex-row justify-content-start">
-              <img class="rounded-circle img-xs" src="../assets/icon.png" alt="" style="height:50px;"/>
-              <div class="col-sm-5 col-md-8 ms-3">
-                <input class="form-control mr-sm-2 bg-light" v-model="commentText" :maxlength="max"
+            <div class="input-group input-group-sm mb-3 mt-3 d-flex flex-row justify-content-start">              <div class="col-sm-5 col-md-8 ms-3">
+                <input class="form-control mr-sm-2 bg-light" v-model="comment" :maxlength="max"
                   type="text" ref="resetInput" placeholder="Publier ici..."
                   aria-label="publication" id="publication"/>
               </div>
               <label class="addImage">
-                <span class="title-image">Ajouter image</span>
+                <span class="title-image">Image</span>
                 <input accept="image/*" type="file" id="FileInput" ref="image"
                 name="image_attachment_upload" v-on:change="handleFileUpload()"/>
               </label>
@@ -43,7 +38,7 @@
           </button>
           <div>
             <button class="btn btn-primary btn-icon-text btn-edit-profile"
-              @click="updateComment" :disabled="!commentaire && !image" data-bs-dismiss="modal">
+              @click="_updateComment()" :disabled="!comment && !image" data-bs-dismiss="modal">
               Republier
             </button>
           </div>
@@ -53,7 +48,7 @@
   </div>
 </template>
 <script>
-/*import { mapState } from 'vuex'
+import { mapState } from 'vuex'
 export default {
     name:'updateComment',
     data(){
@@ -81,12 +76,11 @@ export default {
       this.image = null;
       this.preview = null;
     },
-     updateComment: function () {
+     _updateComment: function () {
       const comment = this.comment;
       const image = this.image;
-      const dynamicId = this.commentaire.id;
-      console.log(dynamicId);
-      this.$store.dispatch("updateComment", { image, comment, dynamicId });
+      const likes = this.likes;
+      this.$store.dispatch("updateComment", { image, comment, likes });
       this.$refs["resetInput"].value = "";
     }, 
  },
@@ -94,5 +88,35 @@ export default {
     //  getting the current user via the state by mapGetters
     ...mapState(["commentaire"]),
   },
-}*/
+}
 </script>
+<style scoped>
+.addImage {
+  margin: auto;
+  padding: 10px;
+  
+}
+.addImage span{
+  cursor: grab;
+  padding: 19px 10px;
+  color:white;
+  border-radius: 10px;
+  background: rgb(253, 200, 200); 
+}
+.addImage input{
+  position: absolute;
+  top: 0; left: 0;  
+  opacity: 0;
+}
+.modal-content{
+  background: #FDEDEC;
+}
+.modal-header{
+  background: #fad4d4;
+}
+@media (max-width: 768px){
+.addImage span{
+  padding: 5px 7px; 
+}
+}
+</style>
