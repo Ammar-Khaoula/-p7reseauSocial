@@ -6,7 +6,6 @@ import { mapState } from 'vuex'
 import HelloWorld from '../components/HelloWorld.vue'
 export default {
   name: "post",
-  props: ['id'],
   components: {
    HelloWorld,
   },

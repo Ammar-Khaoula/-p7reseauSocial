@@ -1,7 +1,8 @@
 <template>
   <section class="input-group d-flex flex-column">
       <div class="me-perso">
-          <h2> {{commentaire.User.last_name}} {{commentaire.User.first_name}}</h2>
+          <h2 v-if="commentaire.User != null"> {{commentaire.User.last_name}} {{commentaire.User.first_name}}</h2>
+          <h2 v-else> Compte désactivé</h2>
       </div>
         <div class="contenue">
           <div>

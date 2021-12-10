@@ -22,7 +22,7 @@
                   <input v-model="password" type="password" name="password" id="password" class="form-control" required placeholder="mot de passe">
                 </div>
                 <div v-if="mode == 'create' && status == 'error_signup'">
-                        <span class="alert"> Adresse mail déjà utilisée </span>
+                       <!-- <span class="alert"> Adresse mail déjà utilisée </span>-->
                 </div>
                 <div v-if="mode == 'login' && status == 'error_login'">
                        <span class="alert"> Email et/ou password invalid </span>

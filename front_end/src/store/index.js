@@ -582,7 +582,7 @@ export default createStore({
                 commit("userInfo", response.data.user);
               }
               resolve(response);
-              window.location.reload();
+             // window.location.reload();
             })
             .catch((error) => {
               console.log("=============: "+error);

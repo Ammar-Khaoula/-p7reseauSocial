@@ -162,7 +162,7 @@ exports.deleteProfile = (req, res, next) => {
                     },
                   })
                     .then((destroyed) => {
-                      for (const posts of post) {
+                     /*for (const posts of post) {
                         if (posts.imageUrl != null) {
                           const fileName = posts.imageUrl.split("/images/")[1];
                           fs.unlink(`images/${fileName}`, () => {
@@ -179,14 +179,14 @@ exports.deleteProfile = (req, res, next) => {
                          where: { id: posts.id }, 
                        })
                      }
-                      }
-                      for (const comments of comment) {
+                      }*/
+                     /* for (const comments of comment) {
                         if (comments.comment) {
                           comments.destroy({
                             where: { id: comments.id }, 
                           })
                         }
-                      }
+                      }*/
                       // "error": "Ici, Internal error !"
                       res
                         .status(200)

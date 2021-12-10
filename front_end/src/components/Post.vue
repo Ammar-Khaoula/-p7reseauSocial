@@ -2,9 +2,12 @@
   <section class="card-header">
         <div class="d-flex">
           <img class="rounded-circle profile-pic" src="../assets/icon.png"  alt="profile image"/>
-          <h2 @click="getMyProfil"> {{post.User.last_name}}  {{post.User.first_name}} <br>
+          <h2 @click="getMyProfil" v-if="post.User != null"> {{post.User.last_name}}  {{post.User.first_name}} <br>
             <span> {{ new Date(post.createdAt).toLocaleString() }}</span>
           </h2>  
+          <h2 v-else> Compte désactivé <br>
+            <span> {{ new Date(post.createdAt).toLocaleString() }}</span>
+          </h2>
         </div> 
     <div class="card-body d-flex justify-content-around">
       <div class="form-group pub_post" v-if="post">
